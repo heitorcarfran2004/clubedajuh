@@ -175,37 +175,180 @@ a{text-decoration:none; color:inherit}
 .botao-linha.suave{background:var(--turq-nevoa); color:var(--turq); box-shadow:none}
 .botao-linha svg{width:13px; height:13px}
 
-/* ── aulas ── */
-.linha.aula{grid-template-columns:62px 1fr}
-.cap-aula{
-  width:62px; height:62px; border-radius:15px;
+/* ── cabeçalho da aba de vídeos ── */
+.cab-videos{padding:24px 2px 0}
+.cab-videos .chip{margin-bottom:12px}
+.cab-videos h1{
+  font-family:var(--serif); font-weight:700; font-size:29px; line-height:1.08;
+  letter-spacing:-.025em;
+}
+/* a segunda palavra em itálico e rosa: dá ritmo ao título sem precisar de ornamento */
+.cab-videos h1 em{font-style:italic; color:var(--rosa)}
+.cab-videos > p{
+  margin-top:9px; font-size:13.5px; line-height:1.55; color:var(--cinza); max-width:330px;
+}
+/* os números saem do texto corrido e viram duas pastilhas: lidas de relance */
+.numeros-videos{display:flex; gap:9px; margin:16px 0 26px}
+.pilula-video{
+  display:flex; align-items:center; gap:8px;
+  background:var(--branco); border-radius:14px; padding:10px 14px;
+  box-shadow:var(--sombra);
+}
+.pilula-video .ic{
+  width:30px; height:30px; border-radius:10px; flex:0 0 auto;
+  display:flex; align-items:center; justify-content:center;
+}
+.pilula-video .ic svg{width:16px; height:16px}
+.pilula-video.a .ic{background:var(--rosa-nevoa); color:var(--rosa)}
+.pilula-video.b .ic{background:var(--turq-nevoa); color:var(--turq)}
+.pilula-video b{display:block; font-size:15px; font-weight:800; line-height:1.1; letter-spacing:-.01em}
+.pilula-video small{display:block; font-size:10.5px; font-weight:700; color:var(--cinza-claro); letter-spacing:.05em; text-transform:uppercase; margin-top:2px}
+
+@media (min-width:760px){
+  .cab-videos h1{font-size:36px}
+  .cab-videos > p{font-size:14.5px; max-width:430px}
+}
+
+/* ── vídeos ── */
+/* Uma coluna no celular, de propósito: em duas, as miniaturas ficam pequenas demais
+   para se distinguirem umas das outras — e como não há título nem número, é a imagem
+   que precisa carregar a identificação sozinha. */
+.grade-videos{display:grid; grid-template-columns:1fr; gap:18px}
+.cartao-video{
+  display:block; width:100%; padding:0; text-align:left;
+  background:var(--branco); border-radius:18px; overflow:hidden;
+  box-shadow:var(--sombra); transition:transform .14s, box-shadow .14s;
+}
+.cartao-video:active{transform:scale(.985)}
+.mini-video{
+  position:relative; display:block; background:var(--fundo);
+  aspect-ratio:16/9; overflow:hidden;
+}
+.mini-video img{width:100%; height:100%; object-fit:cover; display:block}
+/* um véu de baixo para cima: dá contraste para o play e a duração sem escurecer a peça */
+.mini-video::after{
+  content:""; position:absolute; inset:auto 0 0 0; height:52%;
+  background:linear-gradient(180deg, rgba(16,26,31,0), rgba(16,26,31,.55));
+  pointer-events:none;
+}
+.botao-play{
+  position:absolute; inset:0; margin:auto; z-index:2;
+  width:54px; height:54px; border-radius:50%;
+  background:rgba(255,255,255,.95); color:var(--rosa);
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 6px 20px rgba(16,26,31,.34);
+  transition:transform .16s;
+}
+.botao-play svg{width:23px; height:23px; margin-left:3px}
+.cartao-video:active .botao-play{transform:scale(.9)}
+.tempo{
+  position:absolute; right:10px; bottom:10px; z-index:2;
+  background:rgba(16,26,31,.86); color:#fff;
+  font-size:11.5px; font-weight:800; letter-spacing:.02em;
+  padding:4px 9px; border-radius:7px;
+}
+/* o rodapé do card dá corpo à peça e evita a sensação de miniatura solta */
+.pe-video{
+  display:flex; align-items:center; gap:9px;
+  padding:12px 14px; font-size:13px; font-weight:700; color:var(--tinta);
+}
+.pe-video .ic-rel{
+  width:28px; height:28px; border-radius:9px; flex:0 0 auto;
   background:var(--rosa-nevoa); color:var(--rosa);
   display:flex; align-items:center; justify-content:center;
 }
-.cap-aula svg{width:26px; height:26px}
-/* travada nao e clicavel e nao afunda ao toque: nao ha o que abrir */
-.linha.aula.travada{opacity:.72}
-.linha.aula.travada .cap-aula{background:var(--fundo); color:var(--cinza-claro)}
-.chip-travado{
-  display:inline-flex; align-items:center; gap:6px; margin-top:3px;
-  font-size:11.5px; font-weight:800; color:var(--cinza);
-  background:var(--fundo); border-radius:999px; padding:8px 14px;
+.pe-video .ic-rel svg{width:15px; height:15px}
+.pe-video .vai{margin-left:auto; color:var(--cinza-claro); font-size:19px; line-height:1}
+
+/* ── a tela do vídeo ── */
+.tela-video{min-height:100vh; background:var(--fundo); padding-bottom:calc(env(safe-area-inset-bottom) + 30px)}
+.video-topo{
+  position:sticky; top:0; z-index:6; background:var(--branco);
+  padding-top:env(safe-area-inset-top);
+  box-shadow:0 1px 0 var(--linha), 0 4px 18px rgba(30,42,50,.05);
 }
-.chip-travado svg{width:13px; height:13px}
-/* modulo inteiro fechado: um cadeado grande e o aviso, sem lista nenhuma */
-.modulo-travado{
-  background:var(--branco); border-radius:22px; padding:38px 24px;
-  box-shadow:var(--sombra); text-align:center;
+.video-topo-in{
+  height:var(--topo); display:flex; align-items:center; gap:11px;
+  padding:0 12px; max-width:1040px; margin:0 auto;
 }
-.selo-cadeado{
-  width:72px; height:72px; border-radius:50%; margin:0 auto 16px;
-  background:var(--fundo); color:var(--cinza-claro);
+.voltar-video{
+  display:inline-flex; align-items:center; gap:6px; flex:0 0 auto;
+  font-size:13px; font-weight:800; color:var(--rosa);
+  background:var(--rosa-nevoa); border-radius:999px; padding:9px 15px 9px 12px;
+}
+.voltar-video svg{width:15px; height:15px}
+.video-topo b{
+  flex:1; text-align:right; font-size:12.5px; font-weight:800;
+  color:var(--cinza); letter-spacing:.02em;
+}
+
+/* o player encosta nas bordas no celular: video quer largura */
+.moldura-video{background:#0d1418; width:100%}
+.moldura-video .dentro{max-width:1040px; margin:0 auto; aspect-ratio:16/9}
+.moldura-video wistia-player{display:block; width:100%; height:100%}
+
+/* navegação entre um vídeo e o seguinte */
+.nav-video{
+  display:grid; grid-template-columns:1fr 1fr; gap:11px;
+  max-width:1040px; margin:18px auto 0; padding:0 16px;
+}
+.passo-video{
+  display:flex; align-items:center; gap:11px;
+  background:var(--branco); border-radius:16px; padding:13px 15px;
+  box-shadow:var(--sombra); font-size:13.5px; font-weight:800; color:var(--tinta);
+  transition:transform .12s, opacity .16s;
+}
+.passo-video:active{transform:scale(.97)}
+.passo-video[disabled]{opacity:.36; pointer-events:none}
+.passo-video .seta-p{
+  width:32px; height:32px; border-radius:50%; flex:0 0 auto;
+  background:var(--rosa); color:#fff;
   display:flex; align-items:center; justify-content:center;
 }
-.selo-cadeado svg{width:32px; height:32px}
-.modulo-travado h3{font-family:var(--serif); font-weight:700; font-size:18px; line-height:1.25}
-.modulo-travado p{font-size:13px; line-height:1.55; color:var(--cinza); margin:9px auto 0; max-width:300px}
+.passo-video .seta-p svg{width:16px; height:16px}
+.passo-video.prox{justify-content:flex-end; text-align:right}
+.passo-video small{display:block; font-size:11px; font-weight:700; color:var(--cinza-claro); margin-bottom:1px}
 
+.trilha-video{
+  max-width:1040px; margin:16px auto 0; padding:0 16px;
+  display:flex; align-items:center; gap:10px;
+}
+.trilha-video i{flex:1; height:4px; border-radius:99px; background:var(--linha); overflow:hidden}
+.trilha-video i b{display:block; height:100%; background:var(--rosa); border-radius:99px}
+.trilha-video span{font-size:11.5px; font-weight:800; color:var(--cinza-claro); white-space:nowrap}
+
+/* a fila do que vem depois: enche o pé da tela e evita o beco sem saída de
+   quem terminou o vídeo */
+.cabeca-fila{max-width:1040px; margin:26px auto 0; padding:0 16px}
+.cabeca-fila h2{font-family:var(--serif); font-weight:700; font-size:17px; letter-spacing:-.01em}
+.fila-video{
+  display:flex; gap:11px; overflow-x:auto; scroll-snap-type:x proximity;
+  padding:12px 16px 6px; scrollbar-width:none; max-width:1040px; margin:0 auto;
+}
+.fila-video::-webkit-scrollbar{display:none}
+.item-fila{
+  flex:0 0 152px; scroll-snap-align:start; display:block;
+  border-radius:13px; overflow:hidden; box-shadow:var(--sombra);
+  background:var(--branco); position:relative;
+}
+.item-fila img{width:100%; aspect-ratio:16/9; object-fit:cover; display:block}
+.item-fila .tempo{right:6px; bottom:6px; font-size:10.5px; padding:3px 7px}
+.item-fila.agora{outline:2.5px solid var(--rosa); outline-offset:-2.5px}
+.item-fila .marca-agora{
+  position:absolute; left:6px; top:6px; z-index:2;
+  background:var(--rosa); color:#fff;
+  font-size:9.5px; font-weight:900; letter-spacing:.08em;
+  padding:3px 8px; border-radius:99px;
+}
+
+@media (min-width:620px){
+  .grade-videos{grid-template-columns:repeat(2,1fr)}
+}
+@media (min-width:1000px){
+  .grade-videos{grid-template-columns:repeat(3,1fr); gap:18px}
+  .moldura-video .dentro{padding:18px 16px; aspect-ratio:auto}
+  .moldura-video wistia-player{border-radius:14px; overflow:hidden; aspect-ratio:16/9}
+}
 /* ── perfil ── */
 .cartao-perfil{
   background:var(--branco); border-radius:22px; padding:22px 18px; text-align:center;
@@ -588,14 +731,52 @@ a{text-decoration:none; color:inherit}
   </div>
 </div>
 
-<!-- ═════════════════ AULAS ═════════════════ -->
-<div class="tela" id="tela-aulas">
+<!-- ═════════════════ VÍDEOS ═════════════════ -->
+<div class="tela" id="tela-videos">
   <div class="wrap">
-    <div class="ola">
-      <h1>Aulas</h1>
-      <p>As videoaulas da coleção.</p>
+    <header class="cab-videos">
+      <span class="chip rosa">Passo a passo em vídeo</span>
+      <h1>Confecções <em>gravadas</em></h1>
+      <p>Brincos feitos do começo ao fim, sem corte. Dá para acompanhar montando junto.</p>
+      <div class="numeros-videos" id="numeros-videos"></div>
+    </header>
+    <div class="grade-videos" id="grade-videos"></div>
+  </div>
+</div>
+
+<!-- ═════════════════ UM VÍDEO ═════════════════ -->
+<div class="tela" id="tela-video">
+  <div class="tela-video">
+    <div class="video-topo">
+      <div class="video-topo-in">
+        <button class="voltar-video toque" onclick="ir('videos')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Vídeos
+        </button>
+        <b id="video-pos"></b>
+      </div>
     </div>
-    <div class="lista" id="lista-aulas"></div>
+
+    <div class="moldura-video"><div class="dentro" id="caixa-video"></div></div>
+
+    <div class="trilha-video">
+      <span id="video-tempo"></span>
+      <i><b id="video-trilha"></b></i>
+    </div>
+
+    <div class="nav-video">
+      <button class="passo-video" id="video-ant" onclick="passoVideo(-1)">
+        <span class="seta-p"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></span>
+        <span><small>Ver o</small>anterior</span>
+      </button>
+      <button class="passo-video prox" id="video-prox" onclick="passoVideo(1)">
+        <span><small>Ver o</small>próximo</span>
+        <span class="seta-p"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span>
+      </button>
+    </div>
+
+    <div class="cabeca-fila"><h2>Na sequência</h2></div>
+    <div class="fila-video" id="fila-video"></div>
   </div>
 </div>
 
@@ -713,9 +894,9 @@ a{text-decoration:none; color:inherit}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
       Biblioteca
     </button>
-    <button class="aba" data-aba="aulas" onclick="ir('aulas')">
+    <button class="aba" data-aba="videos" onclick="ir('videos')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="15" rx="2.5"/><path d="M10 9l5 2.5-5 2.5V9z"/><path d="M8 22h8"/></svg>
-      Aulas
+      Vídeos
     </button>
     <button class="aba" data-aba="perfil" onclick="ir('perfil')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -732,10 +913,10 @@ a{text-decoration:none; color:inherit}
      #/biblioteca  os materiais  #/perfil      a conta
      #/ler/b3/7    leitor do bonus 3 na pagina 7
    ══════════════════════════════════════════════════════════════════════ */
-var TELAS = { inicio:'tela-inicio', biblioteca:'tela-biblioteca', aulas:'tela-aulas',
-              perfil:'tela-perfil', leitor:'tela-leitor' };
+var TELAS = { inicio:'tela-inicio', biblioteca:'tela-biblioteca', videos:'tela-videos',
+              perfil:'tela-perfil', leitor:'tela-leitor', video:'tela-video' };
 var SUBTITULO = { inicio:'Área de membros', biblioteca:'Seus materiais',
-                  aulas:'Videoaulas', perfil:'Sua conta' };
+                  videos:'Confecções gravadas', perfil:'Sua conta' };
 
 function ir(aba) { location.hash = aba === 'inicio' ? '#/' : '#/' + aba; }
 
@@ -745,21 +926,27 @@ function rota() {
     abrirLeitor(p[1], p[2] ? parseInt(p[2], 10) : null);
     return;
   }
+  if (p[0] === 'video' && p[1]) { abrirVideo(p[1]); return; }
   mostrar(TELAS[p[0]] ? p[0] : 'inicio');
 }
 window.addEventListener('hashchange', rota);
 
 function mostrar(aba) {
+  // saindo da tela do vídeo: descarta o player para o áudio não continuar
+  if (aba !== 'video' && document.getElementById('tela-video').classList.contains('on')) fecharVideo();
   Object.keys(TELAS).forEach(function (k) {
     document.getElementById(TELAS[k]).classList.toggle('on', k === aba);
   });
   // a top bar da marca fica em TODAS as telas, leitor incluido: sem ela a tela de leitura
   // fica orfa e parece outro site. So a barra de abas some, para nao brigar com o
   // botao de baixar nem roubar altura de quem esta lendo.
-  var lendo = aba === 'leitor';
+  var lendo = aba === 'leitor' || aba === 'video';
   document.getElementById('nav').style.display = lendo ? 'none' : '';
   document.getElementById('fab').style.display = lendo ? 'none' : '';
-  document.getElementById('topo-sub').textContent = lendo ? 'Lendo agora' : (SUBTITULO[aba] || '');
+  document.getElementById('topo-sub').textContent =
+    aba === 'leitor' ? 'Lendo agora'
+    : aba === 'video' ? 'Assistindo'
+    : (SUBTITULO[aba] || '');
   document.querySelectorAll('.aba').forEach(function (b) {
     b.classList.toggle('on', b.dataset.aba === aba);
   });
@@ -787,8 +974,18 @@ function salvarProgresso(slug, n) {
 // mostrava, e as capas sozinhas eram 600 dos 834 KB do carregamento inicial.
 function peq(caminho) { return caminho.replace(/\.webp$/, '-sm.webp'); }
 
+// 1482 -> "24:42"; passando de uma hora, "1:02:15"
+function duracao(s) {
+  var h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = Math.round(s % 60);
+  var dois = function (n) { return String(n).padStart(2, '0'); };
+  return h ? h + ':' + dois(m) + ':' + dois(x) : m + ':' + dois(x);
+}
+
 var SETA = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
 var SACOLA = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><path d="M3 6h18M16 10a4 4 0 01-8 0"/></svg>';
+var FILME = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4.5" width="19" height="15" rx="2.5"/><path d="M10 9l5 3-5 3V9z"/></svg>';
+var RELOGIO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5.2l3.4 2"/></svg>';
+var PLAY_CHEIO = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.6v12.8l10.5-6.4z"/></svg>';
 var CADEADO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>';
 var PLAY = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10 8.5l6 3.5-6 3.5v-7z"/></svg>';
 
@@ -856,24 +1053,29 @@ function montarTudo() {
   }).join('');
   document.getElementById('lista-ofertas').innerHTML = ofertas;
 
-  // ── aulas: com o módulo bloqueado, a tela é um cadeado e um aviso, sem lista ──
-  var mod = CATALOGO.aulasModulo;
-  document.getElementById('lista-aulas').innerHTML = mod.bloqueado
-    ? '<div class="modulo-travado">' +
-        '<div class="selo-cadeado">' + CADEADO + '</div>' +
-        '<h3>' + mod.titulo + '</h3>' +
-        '<p>' + mod.texto + '</p>' +
-      '</div>'
-    : mod.lista.map(function (a) {
-        return '<a class="linha aula toque" href="' + a.video + '" target="_blank" rel="noopener">' +
-          '<div class="cap-aula">' + PLAY + '</div>' +
-          '<div class="dados">' +
-            '<h4>Aula ' + a.n + ' — ' + a.titulo + '</h4>' +
-            '<p class="meta">' + a.sub + '</p>' +
-            '<span class="botao-linha">' + PLAY + 'Assistir · ' + a.dur + '</span>' +
-          '</div>' +
-        '</a>';
-      }).join('');
+  // ── vídeos: grade de miniaturas, sem título e sem número ──
+  var vs = CATALOGO.videos || [];
+  var seg = vs.reduce(function (t, v) { return t + v.seg; }, 0);
+  document.getElementById('numeros-videos').innerHTML =
+    '<div class="pilula-video a"><span class="ic">' + FILME + '</span>' +
+      '<span><b>' + vs.length + '</b><small>vídeos</small></span></div>' +
+    '<div class="pilula-video b"><span class="ic">' + RELOGIO + '</span>' +
+      '<span><b>' + Math.floor(seg / 3600) + 'h' + String(Math.round(seg % 3600 / 60)).padStart(2, '0') +
+      '</b><small>no total</small></span></div>';
+  document.getElementById('grade-videos').innerHTML = vs.map(function (v) {
+    return '<a class="cartao-video" href="#/video/' + v.id + '">' +
+      '<span class="mini-video">' +
+        '<img src="assets/videos/' + v.id + '.webp" alt="" loading="lazy" width="640" height="360">' +
+        '<span class="botao-play">' + PLAY_CHEIO + '</span>' +
+        '<span class="tempo">' + duracao(v.seg) + '</span>' +
+      '</span>' +
+      '<span class="pe-video">' +
+        '<span class="ic-rel">' + RELOGIO + '</span>' +
+        'Confecção completa' +
+        '<span class="vai">›</span>' +
+      '</span>' +
+    '</a>';
+  }).join('');
 
   // ── biblioteca: o principal e os bônus na mesma lista ──
   // enquanto os extras estao liberados, eles contam como material da aluna
@@ -1100,12 +1302,94 @@ document.addEventListener('keydown', function (e) {
   if (!document.getElementById('tela-leitor').classList.contains('on')) return;
   if (e.key === 'ArrowRight') virar(1);
   if (e.key === 'ArrowLeft') virar(-1);
+  if (document.getElementById('tela-video').classList.contains('on')) {
+    if (e.key === 'ArrowRight') passoVideo(1);
+    if (e.key === 'ArrowLeft') passoVideo(-1);
+    if (e.key === 'Escape') ir('videos');
+    return;
+  }
   if (e.key === 'Escape') {
     if (document.getElementById('guia').classList.contains('on')) fecharGuia();
     else if (document.getElementById('lupa').classList.contains('on')) fecharLupa();
     else ir('inicio');
   }
 });
+
+/* ── player dos vídeos ────────────────────────────────────────────────
+   O script do Wistia entra SOB DEMANDA, no primeiro play. Carregá-lo de
+   início custaria uma requisição externa a quem nunca abre esta aba.
+   ─────────────────────────────────────────────────────────────────── */
+var wistiaCarregado = false;
+function carregarWistia() {
+  if (wistiaCarregado) return;
+  wistiaCarregado = true;
+  var a = document.createElement('script');
+  a.src = 'https://fast.wistia.com/player.js'; a.async = true;
+  document.head.appendChild(a);
+}
+
+// qual vídeo está aberto, para as setas saberem para onde ir
+var videoAtual = -1;
+
+function abrirVideo(id) {
+  var vs = CATALOGO.videos || [];
+  var i = vs.findIndex(function (v) { return v.id === id; });
+  if (i < 0) { ir('videos'); return; }
+  videoAtual = i;
+  carregarWistia();
+
+  // o módulo é próprio de cada mídia e só precisa entrar uma vez
+  if (!document.querySelector('script[data-wistia="' + id + '"]')) {
+    var m = document.createElement('script');
+    m.src = 'https://fast.wistia.com/embed/' + id + '.js';
+    m.async = true; m.type = 'module';
+    m.setAttribute('data-wistia', id);
+    document.head.appendChild(m);
+  }
+  // trocar o innerHTML descarta o player anterior junto — sem isso o áudio do
+  // vídeo antigo continuaria tocando ao pular para o próximo
+  document.getElementById('caixa-video').innerHTML =
+    '<wistia-player media-id="' + id + '" aspect="1.7777777777777777" ' +
+    'player-color="E5446E"></wistia-player>';
+
+  document.getElementById('video-pos').textContent = (i + 1) + ' de ' + vs.length;
+  document.getElementById('video-tempo').textContent = duracao(vs[i].seg);
+  document.getElementById('video-trilha').style.width = ((i + 1) / vs.length * 100) + '%';
+  document.getElementById('video-ant').disabled = i === 0;
+  document.getElementById('video-prox').disabled = i === vs.length - 1;
+
+  // a fila mostra a coleção inteira, com o atual marcado — assim dá para pular
+  // para qualquer um sem voltar à grade
+  var fila = document.getElementById('fila-video');
+  fila.innerHTML = vs.map(function (v, k) {
+    return '<a class="item-fila' + (k === i ? ' agora' : '') + '" href="#/video/' + v.id + '">' +
+      (k === i ? '<span class="marca-agora">AGORA</span>' : '') +
+      '<img src="assets/videos/' + v.id + '.webp" alt="" loading="lazy" width="152" height="86">' +
+      '<span class="tempo">' + duracao(v.seg) + '</span>' +
+    '</a>';
+  }).join('');
+
+  mostrar('video');
+  // centraliza o atual na fila; sem isso, no vídeo 20 a fila abre no começo
+  requestAnimationFrame(function () {
+    var alvo = fila.children[i];
+    if (alvo) fila.scrollTo({ left: alvo.offsetLeft - fila.clientWidth / 2 + alvo.clientWidth / 2 });
+  });
+  document.title = 'Confecção · Miçangas da Juh';
+}
+
+function passoVideo(d) {
+  var vs = CATALOGO.videos || [];
+  var i = videoAtual + d;
+  if (i < 0 || i >= vs.length) return;
+  location.hash = '#/video/' + vs[i].id;
+}
+
+// sair da tela do vídeo tem que matar o player, senão o áudio segue tocando
+function fecharVideo() {
+  var c = document.getElementById('caixa-video');
+  if (c) c.innerHTML = '';
+}
 
 /* ── lupa ─────────────────────────────────────────────────────────── */
 function abrirLupa() {
