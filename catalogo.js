@@ -62,6 +62,11 @@ const CATALOGO = {
       paginas: 31, de: 'R$ 27', por: 'R$ 12,90', liberado: true,
       capa: 'assets/capas/pingentes.webp',
       pdf: 'arquivos/30 Pingentes de Micanga.pdf', checkout: 'TROCAR-CHECKOUT-PINGENTES' },
+    { slug: 'tiaras', titulo: '16 Tiaras de Miçanga',
+      sub: 'Arcos forrados de miçanga, do folclórico ao colorido.',
+      paginas: 17, de: 'R$ 27', por: 'R$ 12,90', liberado: true,
+      capa: 'assets/capas/tiaras.webp',
+      pdf: 'arquivos/16 Tiaras de Micanga.pdf', checkout: 'TROCAR-CHECKOUT-TIARAS' },
   ],
 
   // A aba Aulas: o MÓDULO INTEIRO está bloqueado, e a tela mostra só um cadeado e o

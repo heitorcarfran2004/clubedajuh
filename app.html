@@ -201,9 +201,6 @@ a{text-decoration:none; color:inherit}
 .modulo-travado h3{font-family:var(--serif); font-weight:700; font-size:18px; line-height:1.25}
 .modulo-travado p{font-size:13px; line-height:1.55; color:var(--cinza); margin:9px auto 0; max-width:300px}
 
-/* GRÁTIS no lugar do preço enquanto o produto está liberado */
-.gratis{color:var(--verde); font-weight:800; letter-spacing:.02em}
-
 /* ── perfil ── */
 .cartao-perfil{
   background:var(--branco); border-radius:22px; padding:22px 18px; text-align:center;
@@ -687,15 +684,16 @@ function montarTudo() {
   }).join('');
 
   // ── produtos extras: miniatura à esquerda; nome, páginas e botão empilhados à direita.
-  //    liberado = abre no leitor e mostra GRÁTIS; senão vai para o checkout com o preço ──
+  //    liberado = abre no leitor e nao mostra preco; senao vai para o checkout com o valor ──
   var ofertas = CATALOGO.ofertas.map(function (o) {
     var livre = o.liberado;
     return '<a class="linha toque" href="' + (livre ? '#/ler/' + o.slug : o.checkout) + '">' +
       '<div class="mini"><img src="' + o.capa + '" alt="" loading="lazy" width="74" height="105"></div>' +
       '<div class="dados">' +
         '<h4>' + o.titulo + '</h4>' +
-        '<p class="meta">' + o.paginas + ' páginas · ' +
-          (livre ? '<b class="gratis">GRÁTIS</b>' : '<s>' + o.de + '</s>') + '</p>' +
+        // liberado nao mostra preco nenhum: nem GRATIS, nem valor riscado
+        '<p class="meta">' + o.paginas + ' páginas' +
+          (livre ? '' : ' · <s>' + o.de + '</s>') + '</p>' +
         (livre
           ? '<span class="botao-linha">' + SETA + 'Abrir agora</span>'
           : '<span class="botao-linha">' + SACOLA + 'Adquirir por ' + o.por + '</span>') +
@@ -763,9 +761,12 @@ function abrirLeitor(slug, pag) {
   L.animando = false;
 
   document.getElementById('leitor-titulo').textContent = livro.titulo;
+  // o rotulo diz de onde o material vem: bonus, extra ou o produto principal
   var iBonus = CATALOGO.bonus.indexOf(livro);
+  var eExtra = CATALOGO.ofertas.indexOf(livro) >= 0;
   document.getElementById('leitor-tipo').textContent =
-    (iBonus >= 0 ? 'Bônus ' + (iBonus + 1) : 'Produto principal') + ' · ' + livro.paginas + ' páginas';
+    (iBonus >= 0 ? 'Bônus ' + (iBonus + 1) : eExtra ? 'Produto extra' : 'Produto principal') +
+    ' · ' + livro.paginas + ' páginas';
   document.title = livro.titulo;
   document.getElementById('texto-baixar').textContent =
     'Baixe as ' + livro.paginas + ' páginas em PDF para imprimir os gráficos e consultar ' +
