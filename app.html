@@ -11,9 +11,14 @@
 <title>Miçangas da Juh</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- a capa do produto principal e o maior elemento da primeira tela: pedir cedo tira
+     quase um segundo do LCP em 4G -->
+<link rel="preload" as="image" href="assets/capas/principal-sm.webp"
+      imagesrcset="assets/capas/principal-sm.webp 200w, assets/capas/principal.webp 340w"
+      imagesizes="(min-width:760px) 150px, 104px">
 <link rel="stylesheet" media="print" onload="this.media='all'"
-  href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,700;1,600&family=Inter:wght@400;500;600;700;800;900&display=swap">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Inter:wght@400;500;600;700;800;900&display=swap"></noscript>
+  href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700&family=Inter:wght@400;500;600;700;800;900&display=swap">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700&family=Inter:wght@400;500;600;700;800;900&display=swap"></noscript>
 <style>
 :root{
   --rosa:#E5446E; --rosa-esc:#C32E56; --rosa-nevoa:#FDEFF3; --rosa-claro:#FBDCE5;
@@ -150,21 +155,21 @@ a{text-decoration:none; color:inherit}
 /* ── lista horizontal (ofertas e biblioteca) ── */
 .lista{display:flex; flex-direction:column; gap:11px}
 .linha{
-  display:grid; grid-template-columns:74px 1fr; gap:14px; align-items:center;
+  display:grid; grid-template-columns:89px 1fr; gap:15px; align-items:center;
   background:var(--branco); border-radius:18px; padding:12px;
   box-shadow:var(--sombra);
 }
 /* proporcao de pagina, e nao quadrado: em quadrado o object-fit corta justo o titulo da capa */
-.linha .mini{width:74px; aspect-ratio:1055/1491; border-radius:10px; overflow:hidden; background:var(--creme); box-shadow:0 4px 12px rgba(30,42,50,.16)}
+.linha .mini{width:89px; aspect-ratio:1055/1491; border-radius:10px; overflow:hidden; background:var(--creme); box-shadow:0 4px 12px rgba(30,42,50,.16)}
 .linha .mini img{width:100%; height:100%; object-fit:cover}
 .linha .dados{min-width:0; display:flex; flex-direction:column; align-items:flex-start; gap:5px}
-.linha h4{font-size:14px; font-weight:800; line-height:1.25; letter-spacing:-.01em}
-.linha .meta{font-size:11.5px; font-weight:600; color:var(--cinza)}
+.linha h4{font-size:16px; font-weight:800; line-height:1.24; letter-spacing:-.015em}
+.linha .meta{font-size:12.5px; font-weight:600; color:var(--cinza)}
 .linha .meta s{color:var(--cinza-claro); font-weight:500}
 .botao-linha{
   display:inline-flex; align-items:center; gap:6px; margin-top:3px;
-  background:var(--rosa); color:#fff; font-size:12.5px; font-weight:800;
-  padding:9px 16px; border-radius:11px;
+  background:var(--rosa); color:#fff; font-size:13.5px; font-weight:800;
+  padding:10px 18px; border-radius:12px;
   box-shadow:0 4px 12px rgba(229,68,110,.28);
 }
 .botao-linha.suave{background:var(--turq-nevoa); color:var(--turq); box-shadow:none}
@@ -379,6 +384,126 @@ a{text-decoration:none; color:inherit}
 .baixar svg{width:17px; height:17px}
 .dica-arraste{font-size:11px; color:var(--cinza); margin-top:14px; font-weight:600; opacity:.7; text-align:center}
 
+/* ══════════════════════ BOTÃO FLUTUANTE E GUIA ══════════════════════ */
+/* fica acima da barra de abas e some no leitor, onde a tela e pra ler a pagina */
+.fab{
+  position:fixed; right:16px; z-index:45;
+  bottom:calc(var(--barra) + env(safe-area-inset-bottom) + 16px);
+  display:flex; align-items:center; gap:9px;
+  background:var(--turq); color:#fff; border-radius:999px;
+  padding:13px 19px 13px 16px; font-size:13.5px; font-weight:800;
+  box-shadow:0 8px 24px rgba(18,112,124,.36), 0 2px 6px rgba(18,112,124,.2);
+  transition:transform .14s, box-shadow .14s;
+}
+.fab:active{transform:scale(.94)}
+/* enquanto o guia esta aberto o botao encolhe e some: e ele que virou a tela */
+.fab.guardado{transform:scale(.4); opacity:0; pointer-events:none}
+.fab svg{width:19px; height:19px; flex:0 0 auto}
+.fab .pisca{
+  position:absolute; top:-3px; right:-3px; width:13px; height:13px; border-radius:50%;
+  background:var(--mostarda); box-shadow:0 0 0 2.5px var(--fundo);
+}
+
+/* O popup nasce do botao: um circulo de raio zero no ponto dele que cresce ate cobrir
+   a tela. `--fx` e `--fy` sao escritos pelo JS com a posicao real do botao, porque ela
+   muda com o tamanho da tela e com a safe-area do aparelho.
+   Nao da para usar display:none aqui — display nao anima. Quem esconde e o visibility,
+   atrasado ate o fim da transicao no fechar e imediato no abrir. */
+.guia{
+  position:fixed; inset:0; z-index:80; background:var(--fundo);
+  overflow-y:auto; -webkit-overflow-scrolling:touch; overscroll-behavior:contain;
+  visibility:hidden;
+  clip-path:circle(0px at var(--fx, 88%) var(--fy, 86%));
+  transition:clip-path .40s cubic-bezier(.4,0,.2,1), visibility 0s linear .40s;
+}
+.guia.on{
+  visibility:visible;
+  clip-path:circle(150% at var(--fx, 88%) var(--fy, 86%));
+  transition:clip-path .46s cubic-bezier(.22,.7,.3,1), visibility 0s;
+}
+/* o conteudo entra um instante depois do circulo, senao ele "viaja" junto e embrulha */
+.guia-corpo, .guia-topo{opacity:0; transform:translateY(10px); transition:opacity .28s ease .14s, transform .28s ease .14s}
+.guia.on .guia-corpo, .guia.on .guia-topo{opacity:1; transform:none}
+.guia-topo{
+  position:sticky; top:0; z-index:2; background:var(--branco);
+  padding-top:env(safe-area-inset-top);
+  box-shadow:0 1px 0 var(--linha), 0 4px 18px rgba(30,42,50,.05);
+}
+.guia-topo-in{
+  height:var(--topo); display:flex; align-items:center; gap:12px;
+  padding:0 14px; max-width:820px; margin:0 auto;
+}
+.guia-topo b{flex:1; font-family:var(--serif); font-weight:700; font-size:16px; letter-spacing:-.01em}
+.fechar-guia{
+  width:36px; height:36px; border-radius:50%; flex:0 0 auto;
+  background:var(--fundo); color:var(--tinta); font-size:20px; line-height:1;
+  display:flex; align-items:center; justify-content:center;
+}
+.guia-corpo{
+  max-width:820px; margin:0 auto;
+  padding:0 16px calc(env(safe-area-inset-bottom) + 40px);
+}
+.guia-capa{padding:26px 2px 4px}
+.guia-capa .chip{margin-bottom:11px}
+.guia-capa h1{font-family:var(--serif); font-weight:700; font-size:26px; line-height:1.14; letter-spacing:-.02em}
+.guia-capa p{margin-top:9px; font-size:14px; line-height:1.55; color:var(--cinza)}
+
+/* cada bloco: numero, titulo, texto e a ilustracao */
+.bloco{
+  background:var(--branco); border-radius:20px; padding:18px 16px 16px;
+  box-shadow:var(--sombra); margin-top:14px;
+}
+.bloco-cab{display:flex; align-items:center; gap:11px; margin-bottom:11px}
+.bloco-num{
+  width:31px; height:31px; border-radius:50%; flex:0 0 auto;
+  background:var(--rosa); color:#fff; font-size:14px; font-weight:800;
+  display:flex; align-items:center; justify-content:center;
+}
+.bloco-cab h2{font-family:var(--serif); font-weight:700; font-size:18px; line-height:1.2; letter-spacing:-.01em}
+.bloco p{font-size:13.5px; line-height:1.62; color:var(--tinta); margin-bottom:10px}
+.bloco p:last-of-type{margin-bottom:0}
+.bloco b{font-weight:800}
+.bloco img{
+  width:100%; height:auto; border-radius:14px; margin:13px 0 2px;
+  background:var(--creme);
+}
+.bloco ul{margin:2px 0 10px; padding-left:2px; list-style:none}
+.bloco li{
+  font-size:13.5px; line-height:1.55; color:var(--tinta);
+  padding-left:20px; position:relative; margin-bottom:7px;
+}
+.bloco li::before{
+  content:""; position:absolute; left:3px; top:7px;
+  width:7px; height:7px; border-radius:50%; background:var(--rosa);
+}
+.aviso-guia{
+  margin-top:13px; padding:12px 14px; border-radius:13px;
+  background:var(--mostarda-nevoa); font-size:12.5px; line-height:1.55;
+  color:#7A5A12; font-weight:600;
+}
+.aviso-guia b{font-weight:800}
+
+/* a divisória entre as quatro técnicas */
+.guia-secao{
+  display:flex; align-items:center; gap:11px;
+  margin:26px 2px 2px;
+}
+.guia-secao h2{font-family:var(--serif); font-weight:700; font-size:19px; letter-spacing:-.01em; white-space:nowrap}
+.guia-secao i{flex:1; height:2px; background:var(--linha); border-radius:2px}
+
+.guia-fim{
+  margin-top:22px; padding:22px 18px; text-align:center;
+  background:var(--turq); color:#fff; border-radius:20px;
+}
+.guia-fim h3{font-family:var(--serif); font-weight:700; font-size:18px; line-height:1.25}
+.guia-fim p{font-size:13px; line-height:1.6; margin-top:8px; opacity:.92}
+
+@media (min-width:760px){
+  .guia-capa h1{font-size:32px}
+  .bloco{padding:24px 22px 20px}
+  .fab{padding:15px 24px 15px 20px; font-size:14.5px}
+}
+
 /* lupa */
 .lupa{position:fixed; inset:0; z-index:90; background:rgba(16,26,31,.96); display:none; overflow:auto; padding:14px; -webkit-overflow-scrolling:touch}
 .lupa.on{display:block}
@@ -410,6 +535,8 @@ a{text-decoration:none; color:inherit}
 @media (prefers-reduced-motion:reduce){
   .folha.solta{transition:none}
   .toque:active{transform:none}
+  .guia, .guia.on{transition:none}
+  .guia-corpo, .guia-topo{transition:none}
 }
 </style>
 </head>
@@ -557,6 +684,24 @@ a{text-decoration:none; color:inherit}
   <img id="img-lupa" alt="">
 </div>
 
+<!-- ═════════════════ BOTÃO FLUTUANTE ═════════════════ -->
+<button class="fab" id="fab" onclick="abrirGuia()">
+  <span class="pisca" id="fab-pisca"></span>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.2"/><path d="M9.3 9.2a2.8 2.8 0 015.4 1c0 1.9-2.7 2.4-2.7 4.1"/><circle cx="12" cy="17.6" r="1.05" fill="currentColor" stroke="none"/></svg>
+  Dúvidas?
+</button>
+
+<!-- ═════════════════ GUIA ═════════════════ -->
+<div class="guia" id="guia">
+  <div class="guia-topo">
+    <div class="guia-topo-in">
+      <b>Como ler um gráfico de miçanga</b>
+      <button class="fechar-guia" onclick="fecharGuia()" aria-label="Fechar">×</button>
+    </div>
+  </div>
+  <div class="guia-corpo" id="guia-corpo"></div>
+</div>
+
 <!-- ═════════════════ NAV DE BAIXO ═════════════════ -->
 <nav class="nav" id="nav">
   <div class="nav-in">
@@ -613,6 +758,7 @@ function mostrar(aba) {
   // botao de baixar nem roubar altura de quem esta lendo.
   var lendo = aba === 'leitor';
   document.getElementById('nav').style.display = lendo ? 'none' : '';
+  document.getElementById('fab').style.display = lendo ? 'none' : '';
   document.getElementById('topo-sub').textContent = lendo ? 'Lendo agora' : (SUBTITULO[aba] || '');
   document.querySelectorAll('.aba').forEach(function (b) {
     b.classList.toggle('on', b.dataset.aba === aba);
@@ -636,6 +782,11 @@ function salvarProgresso(slug, n) {
 /* ══════════════════════════════════════════════════════════════════════
    AS TELAS DE CONTEUDO — tudo sai do catalogo.js, nada e escrito no HTML
    ══════════════════════════════════════════════════════════════════════ */
+// a capa tem duas versoes: a de 340 px para o destaque e o carrossel, e a -sm de 200 px
+// para as listas, onde ela aparece em 89 px. Sem isso o app baixava 5x mais pixel do que
+// mostrava, e as capas sozinhas eram 600 dos 834 KB do carregamento inicial.
+function peq(caminho) { return caminho.replace(/\.webp$/, '-sm.webp'); }
+
 var SETA = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
 var SACOLA = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><path d="M3 6h18M16 10a4 4 0 01-8 0"/></svg>';
 var CADEADO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>';
@@ -660,7 +811,9 @@ function montarTudo() {
   var pct = Math.round(lida / pr.paginas * 100);
   document.getElementById('bloco-principal').innerHTML =
     '<a class="destaque toque" href="#/ler/' + pr.slug + '">' +
-      '<div class="capa"><img src="' + pr.capa + '" alt="" width="104" height="147"></div>' +
+      '<div class="capa"><img src="' + pr.capa + '" ' +
+        'srcset="' + peq(pr.capa) + ' 200w, ' + pr.capa + ' 340w" sizes="(min-width:760px) 150px, 104px" ' +
+        'alt="" width="104" height="147" fetchpriority="high"></div>' +
       '<div>' +
         '<span class="chip rosa">Produto principal</span>' +
         '<h3>' + pr.titulo + '</h3>' +
@@ -677,7 +830,8 @@ function montarTudo() {
   document.getElementById('trilho-bonus').innerHTML = CATALOGO.bonus.map(function (b, i) {
     return '<a class="cartao toque" href="#/ler/' + b.slug + '">' +
       '<div class="miniatura"><span class="selo">BÔNUS ' + (i + 1) + '</span>' +
-        '<img src="' + b.capa + '" alt="" loading="lazy" width="132" height="187"></div>' +
+        '<img src="' + b.capa + '" srcset="' + peq(b.capa) + ' 200w, ' + b.capa + ' 340w" ' +
+          'sizes="(min-width:760px) 168px, 132px" alt="" loading="lazy" width="132" height="187"></div>' +
       '<h4>' + b.titulo + '</h4>' +
       '<span class="n">' + b.paginas + ' páginas</span>' +
     '</a>';
@@ -688,7 +842,7 @@ function montarTudo() {
   var ofertas = CATALOGO.ofertas.map(function (o) {
     var livre = o.liberado;
     return '<a class="linha toque" href="' + (livre ? '#/ler/' + o.slug : o.checkout) + '">' +
-      '<div class="mini"><img src="' + o.capa + '" alt="" loading="lazy" width="74" height="105"></div>' +
+      '<div class="mini"><img src="' + peq(o.capa) + '" alt="" loading="lazy" width="89" height="126"></div>' +
       '<div class="dados">' +
         '<h4>' + o.titulo + '</h4>' +
         // liberado nao mostra preco nenhum: nem GRATIS, nem valor riscado
@@ -730,7 +884,7 @@ function montarTudo() {
   document.getElementById('lista-biblioteca').innerHTML = tudo.map(function (l) {
     var n = lerProgresso(l.slug);
     return '<a class="linha toque" href="#/ler/' + l.slug + '">' +
-      '<div class="mini"><img src="' + l.capa + '" alt="" loading="lazy" width="74" height="105"></div>' +
+      '<div class="mini"><img src="' + peq(l.capa) + '" alt="" loading="lazy" width="89" height="126"></div>' +
       '<div class="dados">' +
         '<h4>' + l.titulo + '</h4>' +
         '<p class="meta">' + l.paginas + ' páginas' + (n > 1 ? ' · parou na ' + n : '') + '</p>' +
@@ -947,7 +1101,9 @@ document.addEventListener('keydown', function (e) {
   if (e.key === 'ArrowRight') virar(1);
   if (e.key === 'ArrowLeft') virar(-1);
   if (e.key === 'Escape') {
-    if (document.getElementById('lupa').classList.contains('on')) fecharLupa(); else ir('inicio');
+    if (document.getElementById('guia').classList.contains('on')) fecharGuia();
+    else if (document.getElementById('lupa').classList.contains('on')) fecharLupa();
+    else ir('inicio');
   }
 });
 
@@ -963,6 +1119,123 @@ function fecharLupa() {
 }
 
 montarTudo();
+/* ══════════════════════════════════════════════════════════════════════
+   O GUIA — "Como ler um gráfico de miçanga"
+   O conteúdo mora aqui e não no HTML, para ficar fácil de editar e traduzir.
+   ══════════════════════════════════════════════════════════════════════ */
+var GUIA = [
+  { n: 1, t: 'Um quadradinho é uma miçanga', img: 'anatomia',
+    p: ['Essa é a única regra que vale para <b>todos</b> os gráficos, de qualquer técnica: cada quadradinho ou bolinha do desenho representa <b>uma miçanga</b>, na cor em que ele está pintado.',
+        'A <b>legenda de cores</b> ao lado liga cada cor do gráfico à miçanga de verdade. Antes de começar, separe as cores em potinhos, na ordem da legenda — é o que evita pegar a cor errada no meio da fileira.'] },
+
+  { n: 2, t: 'Por onde começar', img: 'comecar',
+    p: ['Todo gráfico tem um ponto de partida, quase sempre marcado com uma <b>estrela</b>, uma seta ou o número 1. Ele costuma ficar num dos cantos de baixo.',
+        'Se o gráfico não tiver marcação nenhuma, comece pela <b>fileira mais larga</b> da peça: é a mais fácil de contar e a que segura o formato do desenho.'] },
+
+  { n: 3, t: 'O caminho de ida e volta', img: 'serpentina',
+    p: ['O gráfico não se lê como um texto, todo de esquerda para a direita. Ele se lê em <b>zigue-zague</b>: a fileira 1 vai da esquerda para a direita, a fileira 2 volta da direita para a esquerda, a 3 vai de novo, e assim por diante.',
+        'É assim porque a agulha não volta ao começo: ela vira no fim da fileira e continua dali. Ler todas as fileiras no mesmo sentido é o <b>erro número um</b> de quem começa — o desenho sai espelhado.'],
+    aviso: 'Marque a lápis cada fileira concluída, direto no gráfico impresso. Numa peça de 200 fileiras, é isso que evita perder o lugar.' },
+];
+
+var GUIA_TECNICAS = [
+  { n: 4, t: 'Telar: a grade reta', img: 'telar',
+    p: ['No telar (ou <i>loom</i>), as fileiras são <b>perfeitamente alinhadas</b> — colunas e fileiras retas, como papel quadriculado. É a técnica das pulseiras e das tiaras de tiara.',
+        'Cada fileira horizontal do gráfico é <b>uma passada da agulha</b>. A largura do gráfico define quantos fios você arma no telar, e isso se decide antes de começar: não dá para mudar depois.'] },
+
+  { n: 5, t: 'Ponto tijolo: o encaixe deslocado', img: 'tijolo',
+    p: ['Aqui as fileiras ficam <b>deslocadas meia miçanga</b> uma em relação à outra, como tijolos numa parede — e o gráfico mostra isso.',
+        'A miçanga nova não é costurada em outra miçanga: ela se prende no <b>fio que liga</b> duas miçangas da fileira de cima. Por isso o contorno pode ser recortado, e é essa técnica que permite fazer figura (borboleta, tartaruga) em vez de retângulo.'] },
+
+  { n: 6, t: 'Ponto rede: os losangos', img: 'rede',
+    p: ['O ponto rede forma <b>losangos abertos</b>, e o gráfico é um mapa de bolinhas em vez de quadradinhos. É a técnica dos colares e pulseiras de trama vazada.',
+        'O tamanho do losango é sempre <b>ímpar</b> — de 3, 5, 7 ou 11 miçangas por lado. E é ímpar por um motivo: a miçanga <b>do meio</b> de cada lado é a que faz a junção com o losango vizinho. Ao contar, conte só a lateral, sem os meios.',
+        'Repare que o gráfico costuma mostrar só <b>dois módulos</b>: o resto é repetição pura. Você não precisa de um gráfico do colar inteiro.'] },
+
+  { n: 7, t: 'Crochê: enfiar tudo antes', img: 'croche',
+    p: ['Este é o que mais confunde, e é o mais importante entender: <b>você não lê o gráfico enquanto trabalha</b>.',
+        'No crochê com miçanga você converte o gráfico numa sequência e <b>enfia todas as miçangas no fio antes de pegar a agulha</b> — de duas a cinco mil delas, na ordem exata. Só depois começa a crochetar a corda.',
+        'A largura do gráfico aqui é a <b>circunferência</b>: quantas miçangas dão uma volta completa no tubo. Errou a ordem da enfiação, não tem conserto — desfaz tudo.'],
+    aviso: 'Confira a enfiação a cada 50 miçangas, comparando com o gráfico. Achar o erro na miçanga 50 custa dois minutos; achar na 2.000 custa a peça inteira.' },
+];
+
+var GUIA_FIM = [
+  { n: 8, t: 'Os três erros que mais acontecem', img: 'erros',
+    p: ['<b>Sentido errado.</b> Ler todas as fileiras da esquerda para a direita, em vez de zigue-zague. O desenho sai espelhado e só se percebe no fim.',
+        '<b>Tensão irregular.</b> Puxar mais em umas fileiras que em outras. A peça ondula nas bordas e não fica plana. Confira deitando a peça na mesa a cada dez fileiras.',
+        '<b>Perder a linha.</b> Não marcar onde parou. Num gráfico grande, recomeçar do zero por não achar a fileira é o que mais faz gente desistir.'] },
+];
+
+function montarGuia() {
+  var bloco = function (b) {
+    return '<article class="bloco">' +
+      '<div class="bloco-cab"><span class="bloco-num">' + b.n + '</span><h2>' + b.t + '</h2></div>' +
+      b.p.map(function (x) { return '<p>' + x + '</p>'; }).join('') +
+      '<img src="assets/guia/' + b.img + '.webp" alt="" loading="lazy" width="760" height="760">' +
+      (b.aviso ? '<div class="aviso-guia">' + b.aviso + '</div>' : '') +
+    '</article>';
+  };
+  document.getElementById('guia-corpo').innerHTML =
+    '<div class="guia-capa">' +
+      '<span class="chip rosa">Guia rápido</span>' +
+      '<h1>Como ler um gráfico de miçanga</h1>' +
+      '<p>Do primeiro quadradinho à peça pronta. Vale para todos os projetos da coleção — e para qualquer gráfico que você encontrar por aí.</p>' +
+    '</div>' +
+    GUIA.map(bloco).join('') +
+    '<div class="guia-secao"><h2>As quatro técnicas</h2><i></i></div>' +
+    '<p style="font-size:13.5px;line-height:1.6;color:var(--cinza);margin:10px 2px 0">O que muda de uma para outra não é o gráfico em si — é o <b>caminho que a agulha faz</b> dentro dele.</p>' +
+    GUIA_TECNICAS.map(bloco).join('') +
+    '<div class="guia-secao"><h2>Antes de começar</h2><i></i></div>' +
+    GUIA_FIM.map(bloco).join('') +
+    '<div class="guia-fim">' +
+      '<h3>Comece por um projeto FÁCIL</h3>' +
+      '<p>Gráfico pequeno, três cores, desenho grande. Depois de uma peça inteira, ler qualquer gráfico vira automático — e aí os AVANÇADOS deixam de assustar.</p>' +
+    '</div>';
+}
+
+// o circulo do popup precisa nascer no CENTRO DO BOTAO, e a posicao dele depende da
+// tela e da safe-area — por isso e medida na hora, e nao chutada no CSS
+function ancorarGuia() {
+  var fab = document.getElementById('fab');
+  var g = document.getElementById('guia');
+  if (!fab || !g) return;
+  var r = fab.getBoundingClientRect();
+  g.style.setProperty('--fx', (r.left + r.width / 2) + 'px');
+  g.style.setProperty('--fy', (r.top + r.height / 2) + 'px');
+}
+
+function abrirGuia() {
+  if (!guiaMontado) { montarGuia(); guiaMontado = true; }
+  ancorarGuia();
+  var g = document.getElementById('guia');
+  g.scrollTop = 0;
+  document.getElementById('fab').classList.add('guardado');
+  // dois frames: o primeiro aplica a ancora, o segundo dispara a transicao
+  requestAnimationFrame(function () { requestAnimationFrame(function () { g.classList.add('on'); }); });
+  document.body.style.overflow = 'hidden';
+  // o pontinho de novidade some depois da primeira visita
+  try { localStorage.setItem('guia-visto', '1'); } catch (e) {}
+  var p = document.getElementById('fab-pisca'); if (p) p.style.display = 'none';
+}
+
+function fecharGuia() {
+  ancorarGuia();                       // a tela pode ter girado enquanto estava aberto
+  document.getElementById('guia').classList.remove('on');
+  document.body.style.overflow = '';
+  // o botao volta junto com o fim do circulo, nao antes
+  setTimeout(function () { document.getElementById('fab').classList.remove('guardado'); }, 260);
+}
+
+// se a tela mudar de tamanho com o guia aberto, a ancora acompanha
+window.addEventListener('resize', function () {
+  if (document.getElementById('guia').classList.contains('on')) ancorarGuia();
+});
+
+// o guia so e montado no primeiro toque: sao 8 ilustracoes que nao tem por que existir
+// no DOM de quem nunca abriu
+var guiaMontado = false;
+try { if (localStorage.getItem('guia-visto')) document.getElementById('fab-pisca').style.display = 'none'; } catch (e) {}
+
 rota();
 // ao sair do leitor o progresso mudou: remonta os cards para a barra acompanhar
 window.addEventListener('hashchange', function () {
