@@ -1,0 +1,973 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="apple-touch-icon" href="assets/logo-180.png">
+<link rel="icon" href="assets/logo-96.webp">
+<title>Miçangas da Juh</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" media="print" onload="this.media='all'"
+  href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,700;1,600&family=Inter:wght@400;500;600;700;800;900&display=swap">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Inter:wght@400;500;600;700;800;900&display=swap"></noscript>
+<style>
+:root{
+  --rosa:#E5446E; --rosa-esc:#C32E56; --rosa-nevoa:#FDEFF3; --rosa-claro:#FBDCE5;
+  --turq:#12707C; --turq-esc:#0B5158; --turq-nevoa:#E7F3F4;
+  --mostarda:#F0A81E; --mostarda-nevoa:#FFF3DA;
+  --verde:#1FA463;
+  --tinta:#1E2A32; --cinza:#6B7A83; --cinza-claro:#9AA7AE;
+  --branco:#fff; --fundo:#F6F2EC; --creme:#FDF9F4; --linha:#EDE5DB;
+  --leitura:#E9E2D8;
+  --sans:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --serif:"Fraunces",Georgia,serif;
+  --topo:58px;
+  --barra:62px;
+  --sombra:0 2px 10px rgba(30,42,50,.05), 0 10px 28px rgba(30,42,50,.06);
+  --sombra-alta:0 4px 14px rgba(30,42,50,.07), 0 16px 40px rgba(30,42,50,.09);
+}
+*{margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:var(--sans); color:var(--tinta); background:var(--fundo);
+  -webkit-font-smoothing:antialiased; overflow-x:hidden;
+  overscroll-behavior-y:none;
+}
+img{display:block; max-width:100%}
+button{font-family:inherit; cursor:pointer; border:0; background:none; color:inherit}
+a{text-decoration:none; color:inherit}
+.tela{display:none}
+.tela.on{display:block}
+/* tudo que e tocavel afunda um pouco — e o que mais separa app de site */
+.toque{transition:transform .12s ease, opacity .12s ease}
+.toque:active{transform:scale(.968); opacity:.9}
+
+/* ══════════════════════ TOP BAR ══════════════════════ */
+.topo{
+  position:sticky; top:0; z-index:50;
+  background:var(--branco);
+  padding-top:env(safe-area-inset-top);
+  box-shadow:0 1px 0 var(--linha), 0 4px 18px rgba(30,42,50,.045);
+}
+.topo-in{
+  height:var(--topo); display:flex; align-items:center; gap:11px;
+  padding:0 16px; max-width:1040px; margin:0 auto;
+}
+.topo .logo{
+  width:38px; height:38px; border-radius:50%; flex:0 0 auto;
+  box-shadow:0 0 0 2px var(--branco), 0 0 0 3.5px var(--rosa-claro);
+}
+.topo .nome{flex:1; min-width:0}
+.topo .nome b{
+  display:block; font-family:var(--serif); font-weight:700; font-size:16.5px;
+  color:var(--rosa); line-height:1.1; letter-spacing:-.01em;
+}
+.topo .nome span{
+  display:block; font-size:10.5px; font-weight:700; color:var(--cinza-claro);
+  letter-spacing:.1em; text-transform:uppercase; margin-top:2px;
+}
+.avatar{
+  width:36px; height:36px; border-radius:50%; flex:0 0 auto;
+  background:var(--rosa-nevoa); color:var(--rosa);
+  font-size:14px; font-weight:800; display:flex; align-items:center; justify-content:center;
+}
+
+/* ══════════════════════ CONTEUDO ══════════════════════ */
+.wrap{
+  max-width:1040px; margin:0 auto; padding:0 16px;
+  padding-bottom:calc(var(--barra) + env(safe-area-inset-bottom) + 26px);
+}
+.ola{padding:22px 2px 2px}
+.ola h1{font-family:var(--serif); font-weight:700; font-size:23px; line-height:1.18; letter-spacing:-.015em}
+.ola p{margin-top:5px; font-size:13.5px; color:var(--cinza)}
+
+.cabeca-secao{display:flex; align-items:baseline; justify-content:space-between; margin:26px 2px 12px}
+.cabeca-secao h2{font-family:var(--serif); font-weight:700; font-size:17.5px; letter-spacing:-.01em}
+.cabeca-secao span{font-size:12px; color:var(--cinza-claro); font-weight:600}
+
+/* chips */
+.chip{
+  display:inline-flex; align-items:center; gap:5px;
+  font-size:11px; font-weight:800; letter-spacing:.02em;
+  padding:4px 10px; border-radius:999px;
+  background:var(--turq-nevoa); color:var(--turq);
+}
+.chip.rosa{background:var(--rosa-nevoa); color:var(--rosa)}
+
+/* ── card do produto principal ── */
+.destaque{
+  position:relative; overflow:hidden; display:grid;
+  grid-template-columns:104px 1fr; gap:15px; align-items:start;
+  background:var(--branco); border-radius:22px; padding:16px;
+  box-shadow:var(--sombra-alta);
+}
+.destaque::before{
+  content:""; position:absolute; right:-70px; top:-70px; width:190px; height:190px;
+  border-radius:50%; background:var(--rosa-nevoa); z-index:0;
+}
+.destaque > *{position:relative; z-index:1}
+.destaque .capa img{width:104px; height:auto; border-radius:13px; box-shadow:0 8px 20px rgba(30,42,50,.2)}
+.destaque h3{font-family:var(--serif); font-weight:700; font-size:19px; line-height:1.16; letter-spacing:-.015em; margin-top:9px}
+.barra-prog{height:6px; border-radius:99px; background:var(--rosa-claro); overflow:hidden; margin:11px 0 6px}
+.barra-prog i{display:block; height:100%; border-radius:99px; background:var(--rosa)}
+.prog-txt{font-size:11.5px; font-weight:700; color:var(--cinza)}
+.cta{
+  display:flex; align-items:center; justify-content:center; gap:7px; width:100%;
+  margin-top:13px; background:var(--rosa); color:#fff;
+  font-size:14.5px; font-weight:800; letter-spacing:.01em;
+  padding:13px 18px; border-radius:14px;
+  box-shadow:0 6px 16px rgba(229,68,110,.32);
+}
+.cta svg{width:16px; height:16px}
+
+/* ── carrossel dos bonus ── */
+.trilho{
+  display:flex; gap:12px; overflow-x:auto; scroll-snap-type:x proximity;
+  padding:2px 16px 10px; margin:0 -16px; scrollbar-width:none;
+  -webkit-overflow-scrolling:touch;
+}
+.trilho::-webkit-scrollbar{display:none}
+.cartao{
+  flex:0 0 132px; scroll-snap-align:start; display:block;
+  background:var(--branco); border-radius:17px; padding:9px 9px 12px;
+  box-shadow:var(--sombra);
+}
+.cartao .miniatura{position:relative; border-radius:12px; overflow:hidden; box-shadow:0 4px 12px rgba(30,42,50,.15)}
+.cartao .miniatura img{width:100%; height:auto}
+.cartao .selo{
+  position:absolute; top:6px; left:6px;
+  background:rgba(255,255,255,.94); color:var(--rosa);
+  font-size:9px; font-weight:900; letter-spacing:.08em;
+  padding:3px 7px; border-radius:99px;
+}
+.cartao h4{font-size:12.5px; font-weight:700; line-height:1.28; margin:9px 3px 6px; min-height:32px}
+.cartao .n{font-size:10.5px; font-weight:700; color:var(--cinza-claro); margin-left:3px}
+
+/* ── lista horizontal (ofertas e biblioteca) ── */
+.lista{display:flex; flex-direction:column; gap:11px}
+.linha{
+  display:grid; grid-template-columns:74px 1fr; gap:14px; align-items:center;
+  background:var(--branco); border-radius:18px; padding:12px;
+  box-shadow:var(--sombra);
+}
+/* proporcao de pagina, e nao quadrado: em quadrado o object-fit corta justo o titulo da capa */
+.linha .mini{width:74px; aspect-ratio:1055/1491; border-radius:10px; overflow:hidden; background:var(--creme); box-shadow:0 4px 12px rgba(30,42,50,.16)}
+.linha .mini img{width:100%; height:100%; object-fit:cover}
+.linha .dados{min-width:0; display:flex; flex-direction:column; align-items:flex-start; gap:5px}
+.linha h4{font-size:14px; font-weight:800; line-height:1.25; letter-spacing:-.01em}
+.linha .meta{font-size:11.5px; font-weight:600; color:var(--cinza)}
+.linha .meta s{color:var(--cinza-claro); font-weight:500}
+.botao-linha{
+  display:inline-flex; align-items:center; gap:6px; margin-top:3px;
+  background:var(--rosa); color:#fff; font-size:12.5px; font-weight:800;
+  padding:9px 16px; border-radius:11px;
+  box-shadow:0 4px 12px rgba(229,68,110,.28);
+}
+.botao-linha.suave{background:var(--turq-nevoa); color:var(--turq); box-shadow:none}
+.botao-linha svg{width:13px; height:13px}
+
+/* ── aulas ── */
+.linha.aula{grid-template-columns:62px 1fr}
+.cap-aula{
+  width:62px; height:62px; border-radius:15px;
+  background:var(--rosa-nevoa); color:var(--rosa);
+  display:flex; align-items:center; justify-content:center;
+}
+.cap-aula svg{width:26px; height:26px}
+/* travada nao e clicavel e nao afunda ao toque: nao ha o que abrir */
+.linha.aula.travada{opacity:.72}
+.linha.aula.travada .cap-aula{background:var(--fundo); color:var(--cinza-claro)}
+.chip-travado{
+  display:inline-flex; align-items:center; gap:6px; margin-top:3px;
+  font-size:11.5px; font-weight:800; color:var(--cinza);
+  background:var(--fundo); border-radius:999px; padding:8px 14px;
+}
+.chip-travado svg{width:13px; height:13px}
+/* modulo inteiro fechado: um cadeado grande e o aviso, sem lista nenhuma */
+.modulo-travado{
+  background:var(--branco); border-radius:22px; padding:38px 24px;
+  box-shadow:var(--sombra); text-align:center;
+}
+.selo-cadeado{
+  width:72px; height:72px; border-radius:50%; margin:0 auto 16px;
+  background:var(--fundo); color:var(--cinza-claro);
+  display:flex; align-items:center; justify-content:center;
+}
+.selo-cadeado svg{width:32px; height:32px}
+.modulo-travado h3{font-family:var(--serif); font-weight:700; font-size:18px; line-height:1.25}
+.modulo-travado p{font-size:13px; line-height:1.55; color:var(--cinza); margin:9px auto 0; max-width:300px}
+
+/* GRÁTIS no lugar do preço enquanto o produto está liberado */
+.gratis{color:var(--verde); font-weight:800; letter-spacing:.02em}
+
+/* ── perfil ── */
+.cartao-perfil{
+  background:var(--branco); border-radius:22px; padding:22px 18px; text-align:center;
+  box-shadow:var(--sombra-alta); margin-top:16px;
+}
+.cartao-perfil img{width:78px; height:78px; border-radius:50%; margin:0 auto 12px; box-shadow:0 0 0 3px var(--branco), 0 0 0 5px var(--rosa-claro)}
+.cartao-perfil b{display:block; font-size:16px; font-weight:800}
+.cartao-perfil span.email{display:block; font-size:12.5px; color:var(--cinza); margin-top:3px}
+.opcoes{margin-top:14px; background:var(--branco); border-radius:18px; overflow:hidden; box-shadow:var(--sombra)}
+.opcao{
+  display:flex; align-items:center; gap:12px; width:100%; text-align:left;
+  padding:15px 16px; font-size:14px; font-weight:600;
+  border-bottom:1px solid var(--linha);
+}
+.opcao:last-child{border-bottom:0}
+.opcao .ic{width:34px; height:34px; border-radius:11px; background:var(--rosa-nevoa); color:var(--rosa); display:flex; align-items:center; justify-content:center; flex:0 0 auto}
+.opcao .ic svg{width:17px; height:17px}
+.opcao .seta-op{margin-left:auto; color:var(--cinza-claro); font-size:19px}
+.opcao.perigo{color:var(--rosa-esc)}
+
+/* ══════════════════════ BARRA DE NAVEGACAO ══════════════════════ */
+.nav{
+  position:fixed; left:0; right:0; bottom:0; z-index:50;
+  background:rgba(255,255,255,.97); backdrop-filter:saturate(180%) blur(14px);
+  box-shadow:0 -1px 0 var(--linha), 0 -6px 24px rgba(30,42,50,.06);
+  padding-bottom:env(safe-area-inset-bottom);
+}
+.nav-in{height:var(--barra); display:flex; max-width:560px; margin:0 auto}
+.aba{
+  flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px;
+  font-size:10px; font-weight:700; color:var(--cinza-claro); letter-spacing:.01em;
+  transition:color .16s;
+}
+.aba svg{width:22px; height:22px; transition:transform .16s}
+.aba.on{color:var(--rosa)}
+.aba.on svg{transform:translateY(-1px)}
+.aba:active svg{transform:scale(.88)}
+
+/* ══════════════════════ LEITOR ══════════════════════ */
+/* fundo mais fechado que o resto do app: e o que faz a pagina clara saltar da tela */
+.leitor{
+  min-height:100vh; background:var(--leitura);
+  padding:0 0 calc(env(safe-area-inset-bottom) + 26px);
+}
+
+/* cartao de cabecalho do livro: nome no centro, seta de volta a esquerda logo abaixo,
+   chip da pagina a direita, e a barra de progresso fechando o bloco */
+.cabeca{
+  position:relative; max-width:1040px; margin:0 auto; padding:14px 14px 12px;
+  background:var(--branco); border-radius:0 0 22px 22px;
+  box-shadow:0 4px 20px rgba(30,42,50,.08);
+}
+.cabeca h1{
+  font-family:var(--serif); font-weight:700; font-size:17.5px; line-height:1.22;
+  letter-spacing:-.015em; text-align:center; padding:0 4px;
+}
+.cabeca .tipo{
+  display:block; text-align:center; margin-top:5px;
+  font-size:10px; font-weight:800; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--cinza-claro);
+}
+.linha-voltar{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:13px}
+.voltar{
+  display:inline-flex; align-items:center; gap:6px;
+  font-size:12.5px; font-weight:800; color:var(--rosa);
+  background:var(--rosa-nevoa); border-radius:999px;
+  padding:9px 14px 9px 11px;
+}
+.voltar svg{width:15px; height:15px}
+.chip-pag{
+  font-size:11.5px; font-weight:800; color:var(--turq);
+  background:var(--turq-nevoa); border-radius:999px; padding:7px 12px; white-space:nowrap;
+}
+.barra-leitura{height:5px; border-radius:99px; background:var(--fundo); overflow:hidden; margin-top:13px}
+.barra-leitura i{display:block; height:100%; border-radius:99px; background:var(--rosa); transition:width .35s ease}
+
+/* as setas flutuam sobre as bordas da pagina no celular e saem para fora no desktop —
+   no celular, seta em coluna propria rouba largura justo de quem precisa: a pagina */
+.zona{position:relative; max-width:1040px; margin:20px auto 0; display:flex; justify-content:center; padding:0 6px}
+.palco{
+  position:relative; width:88%; max-width:360px; aspect-ratio:1055/1491;
+  perspective:2400px; flex:0 1 360px;
+  /* pan-y deixa a pagina rolar na vertical mas entrega o gesto horizontal para o
+     nosso arraste. Sem isso o navegador cancela o pointer no meio e a folha nao vira. */
+  touch-action:pan-y; user-select:none; -webkit-user-select:none;
+}
+.palco img{-webkit-user-drag:none; user-drag:none; pointer-events:none}
+.palco .fundo{
+  position:absolute; inset:0; border-radius:10px; overflow:hidden;
+  background:var(--creme); box-shadow:0 10px 34px rgba(30,42,50,.18);
+}
+.palco .fundo img, .face img{width:100%; height:100%; object-fit:contain; background:var(--creme)}
+
+/* A folha que vira: frente e a pagina, verso e o papel.
+   ELA NAO PODE TER overflow:hidden — overflow cria contexto de empilhamento e anula o
+   preserve-3d, e ai o backface-visibility para de valer: em vez do verso de papel
+   aparece a propria pagina espelhada no meio do giro. O recorte fica nas .face.
+   Pelo mesmo motivo, o will-change so pode listar transform. */
+/* PARADA, a folha nao pinta e nao pede camada nenhuma.
+   Enquanto ela ficava visivel por cima com will-change + preserve-3d, o Chrome promovia
+   a pagina a camada de composicao, rasterizava uma vez e reusava o bitmap — a pagina
+   abria nitida e borrava cerca de um segundo depois, quando a promocao acontecia.
+   Parado, quem aparece e o .fundo, que e 2D puro e desenha na resolucao da tela. */
+.folha{
+  position:absolute; inset:0; border-radius:10px;
+  transform-style:preserve-3d; transform-origin:left center;
+  box-shadow:0 10px 34px rgba(30,42,50,.18);
+}
+.folha.parada{visibility:hidden}
+.folha:not(.parada){will-change:transform}
+.folha.solta{transition:transform .62s cubic-bezier(.22,.68,.3,1), opacity .62s linear}
+.face{position:absolute; inset:0; backface-visibility:hidden; overflow:hidden; border-radius:10px}
+.face.frente{transform:translateZ(.6px)}
+.face.verso{
+  transform:rotateY(180deg) translateZ(.6px);
+  background:linear-gradient(105deg,#F6F0E7 0%,#FDF9F4 42%,#F3EBE0 100%);
+}
+/* a sombra que escurece a folha conforme ela levanta — e o que da volume */
+.sombra{
+  position:absolute; inset:0; pointer-events:none; opacity:0; backface-visibility:hidden;
+  background:linear-gradient(90deg, rgba(30,42,50,.36) 0%, rgba(30,42,50,0) 58%);
+}
+
+.seta{
+  position:absolute; top:50%; z-index:5;
+  width:44px; height:44px; border-radius:50%;
+  background:rgba(255,255,255,.94); backdrop-filter:blur(8px); color:var(--rosa);
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 4px 16px rgba(30,42,50,.2);
+  transform:translateY(-50%); transition:transform .12s, opacity .16s;
+}
+/* max() encosta a seta na borda da tela no celular e a joga para fora da pagina assim
+   que sobra espaco; 282px = metade do palco grande + folga + a largura da propria seta */
+.seta.ant{left:max(4px, calc(50% - 262px))}
+.seta.prox{right:max(4px, calc(50% - 262px))}
+.seta:active{transform:translateY(-50%) scale(.9)}
+.seta:disabled{opacity:0; pointer-events:none}
+.seta svg{width:19px; height:19px}
+
+/* a regua vive numa faixa branca propria, senao os numeros ficam boiando no fundo */
+.paginas{max-width:1040px; margin:18px auto 0; padding:0 12px}
+.numeros{
+  display:flex; gap:6px; overflow-x:auto; scroll-behavior:smooth;
+  padding:8px; scrollbar-width:none;
+  background:var(--branco); border-radius:16px; box-shadow:var(--sombra);
+}
+.numeros::-webkit-scrollbar{display:none}
+/* circulo de verdade: largura fixa igual a altura, e nao um retangulo arredondado.
+   12px de fonte porque o maior numero da colecao tem tres digitos (101) */
+.numeros button{
+  flex:0 0 auto; width:36px; height:36px; padding:0; border-radius:50%;
+  font-size:12px; font-weight:800; color:var(--cinza); background:var(--fundo);
+  transition:transform .12s;
+}
+.numeros button:active{transform:scale(.9)}
+.numeros button.atual{background:var(--rosa); color:#fff; box-shadow:0 4px 12px rgba(229,68,110,.3)}
+
+/* cartao proprio, e bem separado da regua: colado nela, o botao parecia parte da
+   paginacao e ninguem entendia que ali se baixa o material inteiro */
+.rodape-leitor{max-width:1040px; margin:26px auto 0; padding:0 12px}
+.cartao-baixar{
+  background:var(--branco); border-radius:20px; padding:18px 16px;
+  box-shadow:var(--sombra); text-align:center;
+}
+.cartao-baixar h2{
+  font-family:var(--serif); font-weight:700; font-size:16.5px; letter-spacing:-.01em;
+}
+.cartao-baixar p{
+  font-size:12.5px; line-height:1.5; color:var(--cinza); margin:6px auto 14px; max-width:340px;
+}
+.baixar{
+  display:flex; align-items:center; justify-content:center; gap:9px; width:100%;
+  background:var(--turq); color:#fff; font-size:14.5px; font-weight:800;
+  padding:15px; border-radius:16px; box-shadow:0 6px 18px rgba(18,112,124,.26);
+}
+.baixar svg{width:17px; height:17px}
+.dica-arraste{font-size:11px; color:var(--cinza); margin-top:14px; font-weight:600; opacity:.7; text-align:center}
+
+/* lupa */
+.lupa{position:fixed; inset:0; z-index:90; background:rgba(16,26,31,.96); display:none; overflow:auto; padding:14px; -webkit-overflow-scrolling:touch}
+.lupa.on{display:block}
+.lupa img{margin:0 auto; width:auto; max-width:none; height:auto}
+.fechar-lupa{
+  position:fixed; top:calc(14px + env(safe-area-inset-top)); right:14px; z-index:91;
+  width:42px; height:42px; border-radius:50%; background:rgba(255,255,255,.95);
+  color:var(--tinta); font-size:22px; line-height:1; display:flex; align-items:center; justify-content:center;
+}
+
+@media (min-width:760px){
+  .ola h1{font-size:27px}
+  .destaque{grid-template-columns:150px 1fr; gap:22px; padding:22px; align-items:center}
+  .destaque .capa img{width:150px}
+  .destaque h3{font-size:24px}
+  .cta{width:auto; padding:13px 26px}
+  .cartao{flex:0 0 168px}
+  .lista{display:grid; grid-template-columns:repeat(auto-fill,minmax(330px,1fr)); gap:13px}
+}
+@media (min-width:760px){
+  .cabeca{padding:18px; border-radius:0 0 26px 26px}
+  .cabeca h1{font-size:21px}
+  /* display:flex e block-level: width:auto vira 100%. inline-flex encolhe no conteudo */
+  .baixar{display:inline-flex; width:auto; padding:15px 32px}
+}
+@media (min-width:1024px) and (min-height:900px){
+  .palco{max-width:420px; flex-basis:420px}
+}
+@media (prefers-reduced-motion:reduce){
+  .folha.solta{transition:none}
+  .toque:active{transform:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ═════════════════ TOP BAR ═════════════════ -->
+<header class="topo" id="topo">
+  <div class="topo-in">
+    <img class="logo" src="assets/logo-96.webp" srcset="assets/logo-96.webp 96w, assets/logo-192.webp 192w"
+         sizes="38px" alt="Miçangas da Juh" width="38" height="38">
+    <div class="nome">
+      <b>Miçangas da Juh</b>
+      <span id="topo-sub">Área de membros</span>
+    </div>
+    <button class="avatar toque" id="avatar" onclick="ir('perfil')" aria-label="Meu perfil">♥</button>
+  </div>
+</header>
+
+<!-- ═════════════════ INÍCIO ═════════════════ -->
+<div class="tela on" id="tela-inicio">
+  <div class="wrap">
+    <div class="ola">
+      <h1 id="ola-nome">Que bom te ver por aqui!</h1>
+      <p>Tudo o que você comprou está liberado, para sempre.</p>
+    </div>
+
+    <div class="cabeca-secao"><h2>Continue de onde parou</h2></div>
+    <div id="bloco-principal"></div>
+
+    <div class="cabeca-secao">
+      <h2>Seus bônus</h2>
+      <span id="conta-bonus"></span>
+    </div>
+    <div class="trilho" id="trilho-bonus"></div>
+
+    <div class="cabeca-secao"><h2>Produtos Extras</h2></div>
+    <div class="lista" id="lista-ofertas"></div>
+  </div>
+</div>
+
+<!-- ═════════════════ BIBLIOTECA ═════════════════ -->
+<div class="tela" id="tela-biblioteca">
+  <div class="wrap">
+    <div class="ola">
+      <h1>Sua biblioteca</h1>
+      <p id="conta-biblioteca"></p>
+    </div>
+    <div class="lista" id="lista-biblioteca"></div>
+  </div>
+</div>
+
+<!-- ═════════════════ AULAS ═════════════════ -->
+<div class="tela" id="tela-aulas">
+  <div class="wrap">
+    <div class="ola">
+      <h1>Aulas</h1>
+      <p>As videoaulas da coleção.</p>
+    </div>
+    <div class="lista" id="lista-aulas"></div>
+  </div>
+</div>
+
+<!-- ═════════════════ PERFIL ═════════════════ -->
+<div class="tela" id="tela-perfil">
+  <div class="wrap">
+    <div class="cartao-perfil">
+      <img src="assets/logo-192.webp" alt="" width="78" height="78">
+      <b id="perfil-nome">Aluna</b>
+      <span class="email" id="perfil-email"></span>
+      <div style="margin-top:12px"><span class="chip rosa">♥ Acesso vitalício</span></div>
+    </div>
+    <div class="opcoes">
+      <button class="opcao" onclick="ir('biblioteca')">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg></span>
+        Meus materiais
+        <span class="seta-op">›</span>
+      </button>
+      <a class="opcao" href="https://wa.me/" target="_blank" rel="noopener">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 01-9 8.4 8.5 8.5 0 01-3.8-.9L3 21l2-4.9A8.4 8.4 0 1121 11.5z"/></svg></span>
+        Falar com o suporte
+        <span class="seta-op">›</span>
+      </a>
+      <button class="opcao perigo" onclick="sair()">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg></span>
+        Sair da conta
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═════════════════ LEITOR ═════════════════ -->
+<div class="tela" id="tela-leitor">
+  <div class="leitor">
+    <div class="cabeca">
+      <h1 id="leitor-titulo"></h1>
+      <span class="tipo" id="leitor-tipo"></span>
+      <div class="linha-voltar">
+        <button class="voltar toque" onclick="ir('inicio')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Home
+        </button>
+        <span class="chip-pag" id="conta"></span>
+      </div>
+      <div class="barra-leitura"><i id="barra-leitura"></i></div>
+    </div>
+
+    <div class="zona">
+      <button class="seta ant" id="seta-ant" onclick="virar(-1)" aria-label="Página anterior">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+
+      <div class="palco" id="palco">
+        <div class="fundo"><img id="img-fundo" alt=""></div>
+        <div class="folha solta" id="folha">
+          <div class="face frente"><img id="img-frente" alt="Página"></div>
+          <div class="face verso"></div>
+          <div class="sombra" id="sombra"></div>
+        </div>
+      </div>
+
+      <button class="seta prox" id="seta-prox" onclick="virar(1)" aria-label="Próxima página">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+      </button>
+    </div>
+
+    <div class="paginas"><div class="numeros" id="numeros"></div></div>
+
+    <div class="rodape-leitor">
+      <div class="cartao-baixar">
+        <h2>Leve os projetos com você</h2>
+        <p id="texto-baixar"></p>
+        <a class="baixar toque" id="baixar" download>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+          Baixar o PDF completo
+        </a>
+      </div>
+      <p class="dica-arraste">Arraste a página para o lado para virar · toque nela para ampliar</p>
+    </div>
+  </div>
+</div>
+
+<!-- página ampliada -->
+<div class="lupa" id="lupa" onclick="fecharLupa()">
+  <button class="fechar-lupa" onclick="fecharLupa()" aria-label="Fechar">×</button>
+  <img id="img-lupa" alt="">
+</div>
+
+<!-- ═════════════════ NAV DE BAIXO ═════════════════ -->
+<nav class="nav" id="nav">
+  <div class="nav-in">
+    <button class="aba on" data-aba="inicio" onclick="ir('inicio')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5L12 3l9 7.5"/><path d="M5 9.7V21h14V9.7"/></svg>
+      Início
+    </button>
+    <button class="aba" data-aba="biblioteca" onclick="ir('biblioteca')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+      Biblioteca
+    </button>
+    <button class="aba" data-aba="aulas" onclick="ir('aulas')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="15" rx="2.5"/><path d="M10 9l5 2.5-5 2.5V9z"/><path d="M8 22h8"/></svg>
+      Aulas
+    </button>
+    <button class="aba" data-aba="perfil" onclick="ir('perfil')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Perfil
+    </button>
+  </div>
+</nav>
+
+<script src="catalogo.js"></script>
+<script>
+/* ══════════════════════════════════════════════════════════════════════
+   NAVEGACAO — tudo por hash, sem recarregar:
+     #/            inicio        #/loja        a vitrine
+     #/biblioteca  os materiais  #/perfil      a conta
+     #/ler/b3/7    leitor do bonus 3 na pagina 7
+   ══════════════════════════════════════════════════════════════════════ */
+var TELAS = { inicio:'tela-inicio', biblioteca:'tela-biblioteca', aulas:'tela-aulas',
+              perfil:'tela-perfil', leitor:'tela-leitor' };
+var SUBTITULO = { inicio:'Área de membros', biblioteca:'Seus materiais',
+                  aulas:'Videoaulas', perfil:'Sua conta' };
+
+function ir(aba) { location.hash = aba === 'inicio' ? '#/' : '#/' + aba; }
+
+function rota() {
+  var p = (location.hash || '#/').replace(/^#/, '').split('/').filter(Boolean);
+  if (p[0] === 'ler' && CATALOGO.porSlug(p[1])) {
+    abrirLeitor(p[1], p[2] ? parseInt(p[2], 10) : null);
+    return;
+  }
+  mostrar(TELAS[p[0]] ? p[0] : 'inicio');
+}
+window.addEventListener('hashchange', rota);
+
+function mostrar(aba) {
+  Object.keys(TELAS).forEach(function (k) {
+    document.getElementById(TELAS[k]).classList.toggle('on', k === aba);
+  });
+  // a top bar da marca fica em TODAS as telas, leitor incluido: sem ela a tela de leitura
+  // fica orfa e parece outro site. So a barra de abas some, para nao brigar com o
+  // botao de baixar nem roubar altura de quem esta lendo.
+  var lendo = aba === 'leitor';
+  document.getElementById('nav').style.display = lendo ? 'none' : '';
+  document.getElementById('topo-sub').textContent = lendo ? 'Lendo agora' : (SUBTITULO[aba] || '');
+  document.querySelectorAll('.aba').forEach(function (b) {
+    b.classList.toggle('on', b.dataset.aba === aba);
+  });
+  if (!lendo) document.title = 'Miçangas da Juh';
+  window.scrollTo(0, 0);
+}
+
+function sair() { try { sessionStorage.removeItem('membro'); } catch (e) {} location.href = 'index.html'; }
+
+/* ══════════════════════════════════════════════════════════════════════
+   PROGRESSO
+   ══════════════════════════════════════════════════════════════════════ */
+function lerProgresso(slug) {
+  try { return parseInt(localStorage.getItem('pag:' + slug) || '1', 10) || 1; } catch (e) { return 1; }
+}
+function salvarProgresso(slug, n) {
+  try { localStorage.setItem('pag:' + slug, String(n)); } catch (e) {}
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   AS TELAS DE CONTEUDO — tudo sai do catalogo.js, nada e escrito no HTML
+   ══════════════════════════════════════════════════════════════════════ */
+var SETA = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+var SACOLA = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><path d="M3 6h18M16 10a4 4 0 01-8 0"/></svg>';
+var CADEADO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>';
+var PLAY = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10 8.5l6 3.5-6 3.5v-7z"/></svg>';
+
+function montarTudo() {
+  var email = '';
+  try { email = sessionStorage.getItem('membro') || ''; } catch (e) {}
+  var nome = email ? email.split('@')[0].replace(/[._-]+/g, ' ') : '';
+  if (nome) nome = nome.charAt(0).toUpperCase() + nome.slice(1);
+
+  if (nome) {
+    document.getElementById('ola-nome').textContent = 'Oi, ' + nome + '!';
+    document.getElementById('avatar').textContent = nome.charAt(0).toUpperCase();
+    document.getElementById('perfil-nome').textContent = nome;
+  }
+  document.getElementById('perfil-email').textContent = email || 'sem sessão';
+
+  // ── card do produto principal, com barra de progresso ──
+  var pr = CATALOGO.principal;
+  var lida = lerProgresso(pr.slug);
+  var pct = Math.round(lida / pr.paginas * 100);
+  document.getElementById('bloco-principal').innerHTML =
+    '<a class="destaque toque" href="#/ler/' + pr.slug + '">' +
+      '<div class="capa"><img src="' + pr.capa + '" alt="" width="104" height="147"></div>' +
+      '<div>' +
+        '<span class="chip rosa">Produto principal</span>' +
+        '<h3>' + pr.titulo + '</h3>' +
+        '<div class="barra-prog"><i style="width:' + Math.max(pct, 3) + '%"></i></div>' +
+        '<p class="prog-txt">' + (lida > 1
+            ? 'Página ' + lida + ' de ' + pr.paginas + ' · ' + pct + '%'
+            : pr.paginas + ' páginas · ainda não começou') + '</p>' +
+        '<span class="cta">' + (lida > 1 ? 'Continuar lendo' : 'Começar agora') + SETA + '</span>' +
+      '</div>' +
+    '</a>';
+
+  // ── carrossel dos bônus ──
+  document.getElementById('conta-bonus').textContent = CATALOGO.bonus.length + ' liberados';
+  document.getElementById('trilho-bonus').innerHTML = CATALOGO.bonus.map(function (b, i) {
+    return '<a class="cartao toque" href="#/ler/' + b.slug + '">' +
+      '<div class="miniatura"><span class="selo">BÔNUS ' + (i + 1) + '</span>' +
+        '<img src="' + b.capa + '" alt="" loading="lazy" width="132" height="187"></div>' +
+      '<h4>' + b.titulo + '</h4>' +
+      '<span class="n">' + b.paginas + ' páginas</span>' +
+    '</a>';
+  }).join('');
+
+  // ── produtos extras: miniatura à esquerda; nome, páginas e botão empilhados à direita.
+  //    liberado = abre no leitor e mostra GRÁTIS; senão vai para o checkout com o preço ──
+  var ofertas = CATALOGO.ofertas.map(function (o) {
+    var livre = o.liberado;
+    return '<a class="linha toque" href="' + (livre ? '#/ler/' + o.slug : o.checkout) + '">' +
+      '<div class="mini"><img src="' + o.capa + '" alt="" loading="lazy" width="74" height="105"></div>' +
+      '<div class="dados">' +
+        '<h4>' + o.titulo + '</h4>' +
+        '<p class="meta">' + o.paginas + ' páginas · ' +
+          (livre ? '<b class="gratis">GRÁTIS</b>' : '<s>' + o.de + '</s>') + '</p>' +
+        (livre
+          ? '<span class="botao-linha">' + SETA + 'Abrir agora</span>'
+          : '<span class="botao-linha">' + SACOLA + 'Adquirir por ' + o.por + '</span>') +
+      '</div>' +
+    '</a>';
+  }).join('');
+  document.getElementById('lista-ofertas').innerHTML = ofertas;
+
+  // ── aulas: com o módulo bloqueado, a tela é um cadeado e um aviso, sem lista ──
+  var mod = CATALOGO.aulasModulo;
+  document.getElementById('lista-aulas').innerHTML = mod.bloqueado
+    ? '<div class="modulo-travado">' +
+        '<div class="selo-cadeado">' + CADEADO + '</div>' +
+        '<h3>' + mod.titulo + '</h3>' +
+        '<p>' + mod.texto + '</p>' +
+      '</div>'
+    : mod.lista.map(function (a) {
+        return '<a class="linha aula toque" href="' + a.video + '" target="_blank" rel="noopener">' +
+          '<div class="cap-aula">' + PLAY + '</div>' +
+          '<div class="dados">' +
+            '<h4>Aula ' + a.n + ' — ' + a.titulo + '</h4>' +
+            '<p class="meta">' + a.sub + '</p>' +
+            '<span class="botao-linha">' + PLAY + 'Assistir · ' + a.dur + '</span>' +
+          '</div>' +
+        '</a>';
+      }).join('');
+
+  // ── biblioteca: o principal e os bônus na mesma lista ──
+  // enquanto os extras estao liberados, eles contam como material da aluna
+  var tudo = [CATALOGO.principal].concat(CATALOGO.bonus)
+    .concat(CATALOGO.ofertas.filter(function (o) { return o.liberado; }));
+  document.getElementById('conta-biblioteca').textContent =
+    tudo.length + ' materiais · ' + tudo.reduce(function (s, l) { return s + l.paginas; }, 0) + ' páginas no total';
+  document.getElementById('lista-biblioteca').innerHTML = tudo.map(function (l) {
+    var n = lerProgresso(l.slug);
+    return '<a class="linha toque" href="#/ler/' + l.slug + '">' +
+      '<div class="mini"><img src="' + l.capa + '" alt="" loading="lazy" width="74" height="105"></div>' +
+      '<div class="dados">' +
+        '<h4>' + l.titulo + '</h4>' +
+        '<p class="meta">' + l.paginas + ' páginas' + (n > 1 ? ' · parou na ' + n : '') + '</p>' +
+        '<span class="botao-linha suave">Abrir' + SETA + '</span>' +
+      '</div>' +
+    '</a>';
+  }).join('');
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   LEITOR
+   ══════════════════════════════════════════════════════════════════════ */
+var L = { livro: null, i: 1, animando: false };
+var palco = document.getElementById('palco');
+var folha = document.getElementById('folha');
+var sombra = document.getElementById('sombra');
+var imgFrente = document.getElementById('img-frente');
+var imgFundo = document.getElementById('img-fundo');
+
+function urlPagina(livro, n) {
+  return 'assets/livros/' + livro.slug + '/pag-' + String(n).padStart(3, '0') + '.webp';
+}
+
+function abrirLeitor(slug, pag) {
+  var livro = CATALOGO.porSlug(slug);
+  L.livro = livro;
+  L.i = Math.min(Math.max(pag || lerProgresso(slug), 1), livro.paginas);
+  L.animando = false;
+
+  document.getElementById('leitor-titulo').textContent = livro.titulo;
+  var iBonus = CATALOGO.bonus.indexOf(livro);
+  document.getElementById('leitor-tipo').textContent =
+    (iBonus >= 0 ? 'Bônus ' + (iBonus + 1) : 'Produto principal') + ' · ' + livro.paginas + ' páginas';
+  document.title = livro.titulo;
+  document.getElementById('texto-baixar').textContent =
+    'Baixe as ' + livro.paginas + ' páginas em PDF para imprimir os gráficos e consultar ' +
+    'mesmo sem internet. O arquivo é seu para sempre.';
+  var b = document.getElementById('baixar');
+  b.href = livro.pdf;
+  b.setAttribute('download', '');
+
+  // mostrar ANTES de pintar: com a tela em display:none o offsetLeft dos numeros e 0
+  // e a faixa nao rola ate a pagina atual
+  mostrar('leitor');
+  montarNumeros();
+  pintar();
+}
+
+// deixa a cena no estado parado: folha reta mostrando a pagina atual
+function pintar() {
+  folha.classList.remove('solta');
+  folha.style.transform = 'rotateY(0deg)';
+  folha.style.opacity = 1;
+  sombra.style.opacity = 0;
+  // parado, a pagina visivel e a do .fundo — a folha sai de cena para nao virar camada
+  imgFrente.src = urlPagina(L.livro, L.i);
+  imgFundo.src = urlPagina(L.livro, L.i);
+  folha.classList.add('parada');
+  void folha.offsetWidth;                 // aplica o transform antes de religar a transicao
+  folha.classList.add('solta');
+
+  document.getElementById('seta-ant').disabled = L.i <= 1;
+  document.getElementById('seta-prox').disabled = L.i >= L.livro.paginas;
+  document.getElementById('conta').textContent = L.i + ' de ' + L.livro.paginas;
+  document.getElementById('barra-leitura').style.width = (L.i / L.livro.paginas * 100) + '%';
+  marcarNumero();
+  salvarProgresso(L.livro.slug, L.i);
+  precarregar();
+}
+
+// baixa a vizinhanca antes de precisar, senao a virada mostra pagina em branco
+function precarregar() {
+  [L.i - 1, L.i + 1, L.i + 2].forEach(function (n) {
+    if (n >= 1 && n <= L.livro.paginas) { var im = new Image(); im.src = urlPagina(L.livro, n); }
+  });
+}
+
+function montarNumeros() {
+  var html = '';
+  for (var n = 1; n <= L.livro.paginas; n++) {
+    html += '<button data-n="' + n + '" onclick="irPara(' + n + ')">' + n + '</button>';
+  }
+  document.getElementById('numeros').innerHTML = html;
+}
+function marcarNumero() {
+  var alvo = document.getElementById('numeros');
+  var atual = alvo.querySelector('button.atual');
+  if (atual) atual.classList.remove('atual');
+  var novo = alvo.querySelector('button[data-n="' + L.i + '"]');
+  if (novo) {
+    novo.classList.add('atual');
+    // centraliza o numero atual na faixa (com 101 paginas ele sai da vista rapido)
+    alvo.scrollTo({ left: novo.offsetLeft - alvo.clientWidth / 2 + novo.clientWidth / 2, behavior: 'smooth' });
+  }
+}
+
+function irPara(n) {
+  if (L.animando || n === L.i) return;
+  var dir = n > L.i ? 1 : -1;
+  L.i = Math.min(Math.max(n, 1), L.livro.paginas) - dir;   // pula ate a vizinha e vira uma vez
+  pintar();
+  virar(dir);
+}
+
+/* ── a virada ─────────────────────────────────────────────────────────
+   Uma folha so, com duas faces: a frente e a pagina, o verso e papel liso.
+   Ela gira em torno da lateral ESQUERDA, e por baixo aparece a pagina de
+   destino. Avancar gira de 0 a -180; voltar comeca em -180 e vai ate 0.
+   ─────────────────────────────────────────────────────────────────── */
+function preparar(dir) {
+  folha.classList.remove('parada');       // so agora a folha entra em cena
+  if (dir > 0) {
+    // avancar: a folha mostra a pagina atual; embaixo entra a proxima
+    imgFrente.src = urlPagina(L.livro, L.i);
+    imgFundo.src = urlPagina(L.livro, L.i + 1);
+    aplicar(0);
+  } else {
+    // voltar: a folha passa a mostrar a anterior e comeca virada; embaixo fica a atual
+    imgFundo.src = urlPagina(L.livro, L.i);
+    imgFrente.src = urlPagina(L.livro, L.i - 1);
+    folha.classList.remove('solta');
+    aplicar(-180);
+    void folha.offsetWidth;
+    folha.classList.add('solta');
+  }
+}
+
+function aplicar(ang) {
+  var p = Math.min(1, Math.abs(ang) / 180);
+  folha.style.transform = 'rotateY(' + ang + 'deg)';
+  // a sombra e mais forte no meio do giro, quando a folha esta de perfil
+  sombra.style.opacity = p * 0.85;
+  // no fim do giro a folha ja saiu pela esquerda: some com ela nos ultimos 25%,
+  // senao ela reaparece de estalo quando o pintar() a devolve para o lugar
+  folha.style.opacity = p > 0.75 ? Math.max(0, (1 - p) / 0.25) : 1;
+}
+
+function virar(dir) {
+  if (L.animando) return;
+  if (dir > 0 && L.i >= L.livro.paginas) return;
+  if (dir < 0 && L.i <= 1) return;
+
+  L.animando = true;
+  preparar(dir);
+  requestAnimationFrame(function () {
+    requestAnimationFrame(function () {
+      aplicar(dir > 0 ? -180 : 0);
+      setTimeout(function () { L.i += dir; L.animando = false; pintar(); }, 640);
+    });
+  });
+}
+
+/* ── arraste ──────────────────────────────────────────────────────────
+   O gesto vale por virada: puxar para a esquerda avanca, para a direita
+   volta. Passou de 32% do caminho, completa; nao passou, desfaz.
+   ─────────────────────────────────────────────────────────────────── */
+var arraste = null;
+
+palco.addEventListener('pointerdown', function (e) {
+  if (L.animando) return;
+  arraste = { x0: e.clientX, y0: e.clientY, dir: 0, prog: 0, mexeu: false };
+  palco.setPointerCapture(e.pointerId);
+});
+
+palco.addEventListener('pointermove', function (e) {
+  if (!arraste || L.animando) return;
+  var dx = e.clientX - arraste.x0;
+  var dy = e.clientY - arraste.y0;
+
+  // enquanto o gesto parecer rolagem vertical, nao sequestra o toque
+  if (!arraste.mexeu) {
+    if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+    if (Math.abs(dy) > Math.abs(dx)) { arraste = null; return; }
+    arraste.mexeu = true;
+    arraste.dir = dx < 0 ? 1 : -1;
+    if (arraste.dir > 0 && L.i >= L.livro.paginas) { arraste = null; return; }
+    if (arraste.dir < 0 && L.i <= 1) { arraste = null; return; }
+    folha.classList.remove('solta');
+    preparar(arraste.dir);
+  }
+
+  e.preventDefault();
+  var largura = palco.clientWidth || 1;
+  arraste.prog = Math.min(1, Math.max(0, (arraste.dir > 0 ? -dx : dx) / largura));
+  aplicar(arraste.dir > 0 ? -180 * arraste.prog : -180 + 180 * arraste.prog);
+});
+
+function soltar() {
+  if (!arraste) return;
+  var a = arraste; arraste = null;
+  if (!a.mexeu) return;
+
+  folha.classList.add('solta');
+  if (a.prog > 0.32) {
+    L.animando = true;
+    aplicar(a.dir > 0 ? -180 : 0);
+    setTimeout(function () { L.i += a.dir; L.animando = false; pintar(); }, 640);
+  } else {
+    aplicar(a.dir > 0 ? 0 : -180);           // desfaz
+    setTimeout(pintar, 640);
+  }
+}
+palco.addEventListener('pointerup', soltar);
+palco.addEventListener('pointercancel', soltar);
+
+// toque limpo (sem arrastar) abre a pagina ampliada
+palco.addEventListener('click', function () { if (!L.animando) abrirLupa(); });
+
+document.addEventListener('keydown', function (e) {
+  if (!document.getElementById('tela-leitor').classList.contains('on')) return;
+  if (e.key === 'ArrowRight') virar(1);
+  if (e.key === 'ArrowLeft') virar(-1);
+  if (e.key === 'Escape') {
+    if (document.getElementById('lupa').classList.contains('on')) fecharLupa(); else ir('inicio');
+  }
+});
+
+/* ── lupa ─────────────────────────────────────────────────────────── */
+function abrirLupa() {
+  document.getElementById('img-lupa').src = urlPagina(L.livro, L.i);
+  document.getElementById('lupa').classList.add('on');
+  document.body.style.overflow = 'hidden';
+}
+function fecharLupa() {
+  document.getElementById('lupa').classList.remove('on');
+  document.body.style.overflow = '';
+}
+
+montarTudo();
+rota();
+// ao sair do leitor o progresso mudou: remonta os cards para a barra acompanhar
+window.addEventListener('hashchange', function () {
+  if (!/^#\/ler\//.test(location.hash)) montarTudo();
+});
+</script>
+
+</body>
+</html>

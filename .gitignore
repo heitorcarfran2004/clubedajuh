@@ -1,0 +1,5 @@
+# Os PDFs completos ficam de fora: sao 738 MB no total, muito acima do que cabe num
+# repo, e o GitHub barra arquivo acima de 100 MB. Em producao eles vao para um storage
+# e o campo `pdf` do catalogo.js passa a apontar para a URL de la — ate entao o botao
+# de baixar so funciona rodando local, com os arquivos nesta pasta.
+arquivos/
