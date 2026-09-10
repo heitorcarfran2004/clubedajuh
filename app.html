@@ -1129,7 +1129,8 @@ function abrirLeitor(slug, pag) {
     'mesmo sem internet. O arquivo é seu para sempre.';
   var b = document.getElementById('baixar');
   b.href = livro.pdf;
-  b.setAttribute('download', '');
+  // o arquivo no servidor tem nome curto e sem acento; quem baixa ve o nome do produto
+  b.setAttribute('download', livro.titulo.replace(/[\/:*?"<>|]/g, '') + '.pdf');
 
   // mostrar ANTES de pintar: com a tela em display:none o offsetLeft dos numeros e 0
   // e a faixa nao rola ate a pagina atual
