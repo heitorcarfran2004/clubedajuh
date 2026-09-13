@@ -23,6 +23,11 @@ const CATALOGO = {
 
   // o carrossel horizontal
   bonus: [
+    // Entrou em 13/09/2026 como Bônus 1, na frente dos outros cinco. Os slugs antigos
+    // ficaram como estavam de propósito: o progresso de leitura é salvo por slug, e
+    // renumerar b1..b5 faria quem já estava lendo abrir no livro errado.
+    { slug: 'cristal', titulo: 'Brincos de Cristal com Miçangas', sub: 'Franjas, borlas e cascatas de festa e de noiva',
+      paginas: 21, capa: 'assets/capas/cristal.webp', pdf: 'pdf/bonus-cristal.pdf' },
     { slug: 'b1', titulo: 'Tabela de Conversão de Cores', sub: 'Qual miçanga comprar a partir do nome da cor',
       paginas: 10, capa: 'assets/capas/b1.webp', pdf: 'pdf/bonus-1-cores.pdf' },
     { slug: 'b2', titulo: 'Guia de Acabamento Profissional', sub: 'O detalhe que faz a peça parecer de loja',
