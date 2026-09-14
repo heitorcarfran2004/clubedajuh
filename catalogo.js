@@ -52,6 +52,13 @@ const CATALOGO = {
   //
   // `paginas` inclui a capa, que é a página 1 de cada um.
   ofertas: [
+    // Chegou pronto em PDF (14/09/2026), nao foi gerado aqui: a capa e a pagina 1 e cada
+    // receita ocupa de 1 a 3 paginas — ficha, pecas com medida e montagem.
+    { slug: 'bolsas', titulo: '50 Bolsas de Miçanga',
+      sub: 'Bolsinhas em trama de miçanga, com as medidas de cada peça.',
+      paginas: 67, de: 'R$ 37', por: 'R$ 17,90', liberado: true,
+      capa: 'assets/capas/bolsas.webp',
+      pdf: 'pdf/50-bolsas.pdf', checkout: 'TROCAR-CHECKOUT-BOLSAS' },
     { slug: 'pulseiras', titulo: '50 Pulseiras de Miçanga',
       sub: 'Padrões étnicos, florais e geométricos tecidos em telar.',
       paginas: 51, de: 'R$ 37', por: 'R$ 17,90', liberado: true,
