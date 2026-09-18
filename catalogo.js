@@ -91,6 +91,59 @@ const CATALOGO = {
   // no Wistia e atualiza o videos.json, que é o que a tela lê.
   videos: [{"id":"pjh6edg1tl","seg":1482},{"id":"1ofxlnctxi","seg":2201},{"id":"9zaahkc7sy","seg":1579},{"id":"sp13kzjlzr","seg":1531},{"id":"kcq4dwifgv","seg":1783},{"id":"kahrxg4lhi","seg":509},{"id":"xy1n485cm0","seg":611},{"id":"xjbv36ju9k","seg":1586},{"id":"vrysu6vt8n","seg":1386},{"id":"ym8ea0ctyb","seg":1052},{"id":"do7yw5uibu","seg":611},{"id":"p32lu1e0qt","seg":1428},{"id":"93piosixt2","seg":1088},{"id":"7tkn8duk3d","seg":1621},{"id":"n2s46x6z8n","seg":1856},{"id":"hb7il0jwwq","seg":1561},{"id":"h4j2cl7tde","seg":1689},{"id":"vqxqn22dsu","seg":1295},{"id":"46yy15jkwt","seg":1182},{"id":"sqcgkwta8t","seg":780},{"id":"p4y1dfjuk2","seg":1611},{"id":"bcgfsmq4x5","seg":1471},{"id":"8wujl2yq0d","seg":1699},{"id":"q4h974by6l","seg":1380},{"id":"enhx0atgkm","seg":1843},{"id":"o0m2b395w2","seg":1426},{"id":"es4g9vdtbm","seg":1474},{"id":"m0tm2zybfk","seg":1847},{"id":"a52tibkt1i","seg":943},{"id":"qwlmgt3ek5","seg":1199},{"id":"strthc7pna","seg":1652},{"id":"osduervzd9","seg":929},{"id":"idg3gft3mu","seg":1673},{"id":"hd5vue17ao","seg":1208},{"id":"w54q61clcu","seg":1516},{"id":"5qa1w8w4bl","seg":1238},{"id":"0p5597u7fs","seg":1133},{"id":"g1yrd0xj8d","seg":1169},{"id":"q4qyautx2p","seg":1192},{"id":"cuc4mkahcv","seg":1656},{"id":"ooo4yj7lxi","seg":1325},{"id":"bllxp4xhwo","seg":1694},{"id":"i4nlux6p73","seg":1001},{"id":"9afdhi9f91","seg":1694},{"id":"y99jpgq1s9","seg":1488}],
 
+  // O GRÁFICO DE CADA VÍDEO, pelo ID do Wistia. Aparece embaixo do player, com a página
+  // em assets/graficos/<id>.webp e o PDF de uma página em pdf/graficos/<id>.pdf.
+  // O nome é do brinco, não do vídeo: continua sem "aula" e sem número.
+  // Gerado por `node scripts/app-graficos.cjs` — não edite à mão entre os marcadores.
+  // <graficos>
+  graficos: {
+    "pjh6edg1tl": {"nome":"Caveira Mexicana","nivel":"Médio","tamanho":"4 cm de altura","tecnica":"Figura chapada"},
+    "1ofxlnctxi": {"nome":"Trio de Flores","nivel":"Fácil","tamanho":"6 cm de comprimento","tecnica":"Figura chapada"},
+    "9zaahkc7sy": {"nome":"Mandala Dourada","nivel":"Avançado","tamanho":"4,5 cm de diâmetro","tecnica":"Rosácea"},
+    "sp13kzjlzr": {"nome":"Losango Huichol","nivel":"Médio","tamanho":"7 cm de comprimento","tecnica":"Com franjas"},
+    "kcq4dwifgv": {"nome":"Pena Tropical","nivel":"Avançado","tamanho":"12 cm de comprimento","tecnica":"Com franjas"},
+    "kahrxg4lhi": {"nome":"Estrela Vermelha","nivel":"Médio","tamanho":"3,5 cm de diâmetro","tecnica":"Rosácea"},
+    "xy1n485cm0": {"nome":"Asa de Arara","nivel":"Avançado","tamanho":"12 cm de comprimento","tecnica":"Com franjas"},
+    "xjbv36ju9k": {"nome":"Girassol","nivel":"Médio","tamanho":"4 cm de diâmetro","tecnica":"Rosácea"},
+    "vrysu6vt8n": {"nome":"Flor e Franja Azul","nivel":"Avançado","tamanho":"11 cm de comprimento","tecnica":"Com franjas"},
+    "ym8ea0ctyb": {"nome":"Chuva Vermelha","nivel":"Médio","tamanho":"11 cm de comprimento","tecnica":"Com franjas"},
+    "do7yw5uibu": {"nome":"Cometa","nivel":"Avançado","tamanho":"12 cm de comprimento","tecnica":"Com franjas"},
+    "p32lu1e0qt": {"nome":"Diamante Asteca","nivel":"Médio","tamanho":"6 cm de comprimento","tecnica":"Com franjas"},
+    "93piosixt2": {"nome":"Noite Lilás","nivel":"Avançado","tamanho":"11 cm de comprimento","tecnica":"Com franjas"},
+    "7tkn8duk3d": {"nome":"Pena Pavão","nivel":"Avançado","tamanho":"12 cm de comprimento","tecnica":"Com franjas"},
+    "n2s46x6z8n": {"nome":"Corações","nivel":"Fácil","tamanho":"6 cm de comprimento","tecnica":"Figura chapada"},
+    "hb7il0jwwq": {"nome":"Floco de Neve","nivel":"Médio","tamanho":"10 cm de comprimento","tecnica":"Com franjas"},
+    "h4j2cl7tde": {"nome":"Sol Asteca","nivel":"Avançado","tamanho":"11 cm de comprimento","tecnica":"Com franjas"},
+    "vqxqn22dsu": {"nome":"Tucano","nivel":"Avançado","tamanho":"10 cm de comprimento","tecnica":"Com franjas"},
+    "46yy15jkwt": {"nome":"Arara Vermelha","nivel":"Avançado","tamanho":"11 cm de comprimento","tecnica":"Com franjas"},
+    "sqcgkwta8t": {"nome":"Galáxia","nivel":"Avançado","tamanho":"12 cm de comprimento","tecnica":"Com franjas"},
+    "p4y1dfjuk2": {"nome":"Pena do Pôr do Sol","nivel":"Avançado","tamanho":"12 cm de comprimento","tecnica":"Com franjas"},
+    "bcgfsmq4x5": {"nome":"Gota Arco-Íris","nivel":"Médio","tamanho":"6 cm de comprimento","tecnica":"Figura chapada"},
+    "8wujl2yq0d": {"nome":"Melancia","nivel":"Médio","tamanho":"8 cm de comprimento","tecnica":"Com franjas"},
+    "q4h974by6l": {"nome":"Melancia com Franja","nivel":"Médio","tamanho":"11 cm de comprimento","tecnica":"Com franjas"},
+    "enhx0atgkm": {"nome":"Roseta Verde","nivel":"Avançado","tamanho":"11 cm de comprimento","tecnica":"Com franjas"},
+    "o0m2b395w2": {"nome":"Olho Marrom","nivel":"Médio","tamanho":"6 cm de comprimento","tecnica":"Figura chapada"},
+    "es4g9vdtbm": {"nome":"Mandala Azul","nivel":"Avançado","tamanho":"4,5 cm de diâmetro","tecnica":"Rosácea"},
+    "m0tm2zybfk": {"nome":"Arco-Íris Noturno","nivel":"Fácil","tamanho":"5 cm de comprimento","tecnica":"Com franjas"},
+    "a52tibkt1i": {"nome":"Cascata Rosa","nivel":"Médio","tamanho":"11 cm de comprimento","tecnica":"Com franjas"},
+    "qwlmgt3ek5": {"nome":"Cascata Azul","nivel":"Médio","tamanho":"11 cm de comprimento","tecnica":"Com franjas"},
+    "strthc7pna": {"nome":"Flor da Noite","nivel":"Avançado","tamanho":"12 cm de comprimento","tecnica":"Com franjas"},
+    "osduervzd9": {"nome":"Folha Azul","nivel":"Médio","tamanho":"8 cm de comprimento","tecnica":"Com franjas"},
+    "idg3gft3mu": {"nome":"Dupla Roseta","nivel":"Avançado","tamanho":"11 cm de comprimento","tecnica":"Com franjas"},
+    "hd5vue17ao": {"nome":"Espiral Vermelha","nivel":"Médio","tamanho":"7 cm de comprimento","tecnica":"Figura chapada"},
+    "w54q61clcu": {"nome":"Rosa Vermelha","nivel":"Avançado","tamanho":"4 cm de diâmetro","tecnica":"Rosácea"},
+    "5qa1w8w4bl": {"nome":"Flor Lilás","nivel":"Médio","tamanho":"4 cm de diâmetro","tecnica":"Rosácea"},
+    "0p5597u7fs": {"nome":"Caminho de Flores","nivel":"Médio","tamanho":"8 cm de comprimento","tecnica":"Figura chapada"},
+    "g1yrd0xj8d": {"nome":"Rede Rosa","nivel":"Médio","tamanho":"7 cm de comprimento","tecnica":"Com franjas"},
+    "q4qyautx2p": {"nome":"Flor Rosa Gigante","nivel":"Avançado","tamanho":"5 cm de diâmetro","tecnica":"Rosácea"},
+    "cuc4mkahcv": {"nome":"Gota Magenta","nivel":"Avançado","tamanho":"9 cm de comprimento","tecnica":"Com franjas"},
+    "ooo4yj7lxi": {"nome":"Flor e Cascata","nivel":"Avançado","tamanho":"10 cm de comprimento","tecnica":"Com franjas"},
+    "bllxp4xhwo": {"nome":"Cascata Turquesa","nivel":"Avançado","tamanho":"13 cm de comprimento","tecnica":"Com franjas"},
+    "i4nlux6p73": {"nome":"Argola Franjada","nivel":"Médio","tamanho":"10 cm de comprimento","tecnica":"Com franjas"},
+    "9afdhi9f91": {"nome":"Flor Azul com Franja","nivel":"Avançado","tamanho":"11 cm de comprimento","tecnica":"Com franjas"},
+    "y99jpgq1s9": {"nome":"Rosa dos Ventos","nivel":"Avançado","tamanho":"4,5 cm de diâmetro","tecnica":"Rosácea"},
+  },
+  // </graficos>
 };
 
 // atalho para o leitor achar qualquer livro pelo slug, seja principal ou bonus

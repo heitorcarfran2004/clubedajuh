@@ -259,6 +259,24 @@ a{text-decoration:none; color:inherit}
 }
 .pe-video .ic-rel svg{width:15px; height:15px}
 .pe-video .vai{margin-left:auto; color:var(--cinza-claro); font-size:19px; line-height:1}
+.pe-video .txt{min-width:0}
+.pe-video .txt b{display:block; font-size:14px; font-weight:800; letter-spacing:-.01em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.pe-video .txt small{display:block; font-size:11.5px; font-weight:700; color:var(--cinza-claro); margin-top:1px}
+.pe-video .txt small em{font-style:normal; color:var(--rosa)}
+/* o selo na miniatura: diz de relance que aquele vídeo vem com gráfico.
+   É uma etiqueta de canto, e não uma pílula solta, e o tamanho é em %: metade das
+   miniaturas traz o "Become A Member" do YouTube colado no canto (até ~31% da largura
+   e ~15% da altura), e a etiqueta cobre ele inteiro em qualquer largura de cartão. */
+.selo-grafico{
+  position:absolute; left:0; top:0; z-index:2;
+  width:35%; height:18%; min-height:28px;
+  display:flex; align-items:center; justify-content:center; gap:5px;
+  background:#fff; color:var(--rosa);
+  font-size:10px; font-weight:900; letter-spacing:.08em;
+  border-radius:0 0 16px 0;
+  box-shadow:2px 3px 12px rgba(16,26,31,.2);
+}
+.selo-grafico svg{width:12px; height:12px}
 
 /* ── a tela do vídeo ── */
 .tela-video{min-height:100vh; background:var(--fundo); padding-bottom:calc(env(safe-area-inset-bottom) + 30px)}
@@ -316,6 +334,98 @@ a{text-decoration:none; color:inherit}
 .trilha-video i{flex:1; height:4px; border-radius:99px; background:var(--linha); overflow:hidden}
 .trilha-video i b{display:block; height:100%; background:var(--rosa); border-radius:99px}
 .trilha-video span{font-size:11.5px; font-weight:800; color:var(--cinza-claro); white-space:nowrap}
+
+/* ── o gráfico do brinco, embaixo do player ──
+   Um cartão só: nome e ficha em cima, a página inteira no meio e as duas ações no pé.
+   No celular empilha; do tablet para cima a página vai para a esquerda e a ficha para
+   a direita, senão a folha A4 ocupa a tela inteira e empurra tudo para baixo. */
+.cartao-grafico{
+  max-width:1040px; margin:18px auto 0; padding:0 16px;
+}
+/* no celular é uma coluna com o nome em cima da folha; no HTML a folha vem primeiro
+   porque é ela que abre a coluna da esquerda no desktop, daí o `order` */
+.cartao-grafico .dentro{
+  display:flex; flex-direction:column;
+  position:relative; overflow:hidden;
+  background:var(--branco); border-radius:22px; padding:18px 16px 16px;
+  box-shadow:var(--sombra-alta);
+}
+/* a mesma bolha rosa do card do produto principal: amarra a tela ao resto do app */
+.cartao-grafico .dentro::before{
+  content:""; position:absolute; right:-80px; top:-80px; width:200px; height:200px;
+  border-radius:50%; background:var(--rosa-nevoa); z-index:0;
+}
+.cartao-grafico .dentro > *{position:relative; z-index:1}
+.rotulo-grafico{
+  display:flex; align-items:center; gap:8px;
+  font-size:10.5px; font-weight:900; letter-spacing:.12em; text-transform:uppercase; color:var(--rosa);
+}
+.rotulo-grafico .ic{
+  width:26px; height:26px; border-radius:8px; background:var(--rosa); color:#fff;
+  display:flex; align-items:center; justify-content:center; flex:0 0 auto;
+  box-shadow:0 4px 10px rgba(229,68,110,.3);
+}
+.rotulo-grafico .ic svg{width:15px; height:15px}
+.cartao-grafico h2{
+  font-family:var(--serif); font-weight:700; font-size:25px; line-height:1.1;
+  letter-spacing:-.02em; margin-top:11px;
+}
+.ficha-grafico{display:flex; flex-wrap:wrap; gap:6px; margin-top:11px}
+.ficha-grafico span{
+  display:inline-flex; align-items:center; gap:5px;
+  font-size:11.5px; font-weight:800; padding:5px 10px; border-radius:999px;
+}
+.ficha-grafico .nivel{background:var(--mostarda-nevoa); color:#8A5F07}
+.ficha-grafico .nivel i{font-style:normal; color:var(--mostarda); letter-spacing:-.05em}
+.ficha-grafico .med{background:var(--turq-nevoa); color:var(--turq)}
+.ficha-grafico .tec{background:var(--fundo); color:var(--cinza)}
+
+/* a folha: fundo creme e sombra de papel, com o selo de ampliar por cima */
+.previa-grafico{
+  display:block; width:100%; margin-top:16px; padding:0; position:relative;
+  border-radius:14px; overflow:hidden; background:var(--creme);
+  aspect-ratio:1055/1491;
+  box-shadow:0 1px 0 var(--linha), 0 10px 26px rgba(30,42,50,.14);
+}
+.previa-grafico img{width:100%; height:100%; object-fit:contain; display:block}
+.previa-grafico .selo-lupa{
+  position:absolute; right:10px; bottom:10px;
+  display:inline-flex; align-items:center; gap:6px;
+  background:rgba(16,26,31,.84); color:#fff; backdrop-filter:blur(6px);
+  font-size:11.5px; font-weight:800; padding:7px 11px 7px 9px; border-radius:999px;
+}
+.previa-grafico .selo-lupa svg{width:14px; height:14px}
+
+.acoes-grafico{display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-top:14px}
+.acao-grafico{
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  font-size:14px; font-weight:800; padding:14px 12px; border-radius:14px;
+}
+.acao-grafico svg{width:17px; height:17px; flex:0 0 auto}
+.acao-grafico.baixa{background:var(--rosa); color:#fff; box-shadow:0 6px 16px rgba(229,68,110,.3)}
+.acao-grafico.amplia{background:var(--turq-nevoa); color:var(--turq)}
+.nota-grafico{
+  display:flex; align-items:flex-start; gap:8px; margin-top:13px;
+  font-size:12px; line-height:1.5; color:var(--cinza); font-weight:600;
+}
+.nota-grafico b{color:var(--tinta)}
+.nota-grafico span.b{flex:0 0 auto; width:6px; height:6px; border-radius:50%; background:var(--mostarda); margin-top:6px}
+.rotulo-grafico{order:1} .cartao-grafico h2{order:2} .ficha-grafico{order:3}
+.previa-grafico{order:4} .acoes-grafico{order:5} .nota-grafico{order:6}
+
+@media (min-width:700px){
+  /* a última linha fica com a sobra: o texto sobe junto e não se espalha pela altura da folha */
+  .cartao-grafico .dentro{
+    display:grid; grid-template-columns:250px 1fr; column-gap:28px; align-items:start;
+    grid-template-rows:auto auto auto auto 1fr; padding:22px;
+  }
+  .cartao-grafico .rotulo-grafico{margin-top:14px}
+  .cartao-grafico .previa-grafico{grid-column:1; grid-row:1 / span 5; margin-top:0}
+  .cartao-grafico .rotulo-grafico, .cartao-grafico h2, .ficha-grafico,
+  .acoes-grafico, .nota-grafico{grid-column:2}
+  .cartao-grafico h2{font-size:30px}
+  .acoes-grafico{margin-top:20px; max-width:420px}
+}
 
 /* a fila do que vem depois: enche o pé da tela e evita o beco sem saída de
    quem terminou o vídeo */
@@ -764,6 +874,8 @@ a{text-decoration:none; color:inherit}
       <i><b id="video-trilha"></b></i>
     </div>
 
+    <section class="cartao-grafico" id="cartao-grafico"></section>
+
     <div class="nav-video">
       <button class="passo-video" id="video-ant" onclick="passoVideo(-1)">
         <span class="seta-p"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></span>
@@ -934,6 +1046,8 @@ window.addEventListener('hashchange', rota);
 function mostrar(aba) {
   // saindo da tela do vídeo: descarta o player para o áudio não continuar
   if (aba !== 'video' && document.getElementById('tela-video').classList.contains('on')) fecharVideo();
+  // o "voltar" do celular troca a tela por baixo da lupa: ela não pode ficar aberta por cima
+  if (document.getElementById('lupa').classList.contains('on')) fecharLupa();
   Object.keys(TELAS).forEach(function (k) {
     document.getElementById(TELAS[k]).classList.toggle('on', k === aba);
   });
@@ -988,6 +1102,12 @@ var RELOGIO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
 var PLAY_CHEIO = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.6v12.8l10.5-6.4z"/></svg>';
 var CADEADO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>';
 var PLAY = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10 8.5l6 3.5-6 3.5v-7z"/></svg>';
+// nove contas em grade: o desenho do próprio gráfico de miçanga
+var CONTAS = '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5.5" cy="5.5" r="2.4"/><circle cx="12" cy="5.5" r="2.4"/><circle cx="18.5" cy="5.5" r="2.4"/><circle cx="5.5" cy="12" r="2.4"/><circle cx="12" cy="12" r="2.4"/><circle cx="18.5" cy="12" r="2.4"/><circle cx="5.5" cy="18.5" r="2.4"/><circle cx="12" cy="18.5" r="2.4"/><circle cx="18.5" cy="18.5" r="2.4"/></svg>';
+var LUPA = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.8-3.8M11 8v6M8 11h6"/></svg>';
+var BAIXAR = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>';
+var ESTRELAS = { 'Fácil':'★', 'Médio':'★★', 'Avançado':'★★★' };
+function grafico(id) { return (CATALOGO.graficos || {})[id]; }
 
 function montarTudo() {
   var email = '';
@@ -1062,16 +1182,21 @@ function montarTudo() {
     '<div class="pilula-video b"><span class="ic">' + RELOGIO + '</span>' +
       '<span><b>' + Math.floor(seg / 3600) + 'h' + String(Math.round(seg % 3600 / 60)).padStart(2, '0') +
       '</b><small>no total</small></span></div>';
+  // com gráfico, o cartão ganha o nome do brinco e o selo; sem, fica como era
   document.getElementById('grade-videos').innerHTML = vs.map(function (v) {
+    var g = grafico(v.id);
     return '<a class="cartao-video" href="#/video/' + v.id + '">' +
       '<span class="mini-video">' +
         '<img src="assets/videos/' + v.id + '.webp" alt="" loading="lazy" width="640" height="360">' +
+        (g ? '<span class="selo-grafico">' + CONTAS + 'GRÁFICO</span>' : '') +
         '<span class="botao-play">' + PLAY_CHEIO + '</span>' +
         '<span class="tempo">' + duracao(v.seg) + '</span>' +
       '</span>' +
       '<span class="pe-video">' +
-        '<span class="ic-rel">' + RELOGIO + '</span>' +
-        'Confecção completa' +
+        (g
+          ? '<span class="ic-rel">' + CONTAS + '</span>' +
+            '<span class="txt"><b>' + g.nome + '</b><small>Confecção completa · <em>gráfico incluso</em></small></span>'
+          : '<span class="ic-rel">' + RELOGIO + '</span>Confecção completa') +
         '<span class="vai">›</span>' +
       '</span>' +
     '</a>';
@@ -1300,20 +1425,20 @@ palco.addEventListener('pointercancel', soltar);
 palco.addEventListener('click', function () { if (!L.animando) abrirLupa(); });
 
 document.addEventListener('keydown', function (e) {
-  if (!document.getElementById('tela-leitor').classList.contains('on')) return;
-  if (e.key === 'ArrowRight') virar(1);
-  if (e.key === 'ArrowLeft') virar(-1);
+  // a lupa vale para o leitor e para o gráfico do vídeo: o Esc fecha ela antes de tudo
+  if (e.key === 'Escape' && document.getElementById('lupa').classList.contains('on')) { fecharLupa(); return; }
+  // o vídeo vem antes do teste do leitor: com ele depois, as setas do vídeo nunca rodavam
   if (document.getElementById('tela-video').classList.contains('on')) {
     if (e.key === 'ArrowRight') passoVideo(1);
     if (e.key === 'ArrowLeft') passoVideo(-1);
     if (e.key === 'Escape') ir('videos');
     return;
   }
-  if (e.key === 'Escape') {
-    if (document.getElementById('guia').classList.contains('on')) fecharGuia();
-    else if (document.getElementById('lupa').classList.contains('on')) fecharLupa();
-    else ir('inicio');
-  }
+  if (e.key === 'Escape' && document.getElementById('guia').classList.contains('on')) { fecharGuia(); return; }
+  if (!document.getElementById('tela-leitor').classList.contains('on')) return;
+  if (e.key === 'ArrowRight') virar(1);
+  if (e.key === 'ArrowLeft') virar(-1);
+  if (e.key === 'Escape') ir('inicio');
 });
 
 /* ── player dos vídeos ────────────────────────────────────────────────
@@ -1358,6 +1483,7 @@ function abrirVideo(id) {
   document.getElementById('video-trilha').style.width = ((i + 1) / vs.length * 100) + '%';
   document.getElementById('video-ant').disabled = i === 0;
   document.getElementById('video-prox').disabled = i === vs.length - 1;
+  montarGrafico(id);
 
   // a fila mostra a coleção inteira, com o atual marcado — assim dá para pular
   // para qualquer um sem voltar à grade
@@ -1376,7 +1502,38 @@ function abrirVideo(id) {
     var alvo = fila.children[i];
     if (alvo) fila.scrollTo({ left: alvo.offsetLeft - fila.clientWidth / 2 + alvo.clientWidth / 2 });
   });
-  document.title = 'Confecção · Miçangas da Juh';
+  var g = grafico(id);
+  document.title = (g ? g.nome : 'Confecção') + ' · Miçangas da Juh';
+}
+
+// o cartão do gráfico embaixo do player; vídeo sem gráfico não mostra nada
+function montarGrafico(id) {
+  var caixa = document.getElementById('cartao-grafico');
+  var g = grafico(id);
+  caixa.style.display = g ? '' : 'none';
+  if (!g) { caixa.innerHTML = ''; return; }
+  var img = 'assets/graficos/' + id + '.webp';
+  caixa.innerHTML =
+    '<div class="dentro">' +
+      '<button class="previa-grafico toque" onclick="abrirLupa(\'' + img + '\')" aria-label="Ampliar o gráfico">' +
+        '<img src="' + img + '" alt="Gráfico do brinco ' + g.nome + '" width="1055" height="1491">' +
+        '<span class="selo-lupa">' + LUPA + 'Ampliar</span>' +
+      '</button>' +
+      '<div class="rotulo-grafico"><span class="ic">' + CONTAS + '</span>Gráfico deste brinco</div>' +
+      '<h2>' + g.nome + '</h2>' +
+      '<div class="ficha-grafico">' +
+        '<span class="nivel"><i>' + (ESTRELAS[g.nivel] || '') + '</i>' + g.nivel + '</span>' +
+        '<span class="med">' + g.tamanho + '</span>' +
+        '<span class="tec">' + g.tecnica + '</span>' +
+      '</div>' +
+      '<div class="acoes-grafico">' +
+        '<a class="acao-grafico baixa toque" href="pdf/graficos/' + id + '.pdf" ' +
+          'download="Grafico - ' + g.nome + '.pdf">' + BAIXAR + 'Baixar PDF</a>' +
+        '<button class="acao-grafico amplia toque" onclick="abrirLupa(\'' + img + '\')">' + LUPA + 'Ampliar</button>' +
+      '</div>' +
+      '<p class="nota-grafico"><span class="b"></span><span>Deixe o gráfico aberto do lado do vídeo: ' +
+        '<b>cada bolinha é uma miçanga</b>, na cor e na posição certas.</span></p>' +
+    '</div>';
 }
 
 function passoVideo(d) {
@@ -1393,8 +1550,9 @@ function fecharVideo() {
 }
 
 /* ── lupa ─────────────────────────────────────────────────────────── */
-function abrirLupa() {
-  document.getElementById('img-lupa').src = urlPagina(L.livro, L.i);
+// sem argumento amplia a página do leitor; com um caminho, amplia aquela imagem (o gráfico)
+function abrirLupa(src) {
+  document.getElementById('img-lupa').src = typeof src === 'string' ? src : urlPagina(L.livro, L.i);
   document.getElementById('lupa').classList.add('on');
   document.body.style.overflow = 'hidden';
 }
