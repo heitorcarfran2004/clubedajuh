@@ -198,6 +198,15 @@ a{text-decoration:none; color:inherit}
 }
 .cartao-trava h2 em{font-style:italic; color:var(--rosa)}
 .cartao-trava p{margin-top:7px; font-size:13.5px; line-height:1.5; color:var(--cinza)}
+/* sem a compra, o cartão é só o aviso: cadeado grande e centralizado, sem grade embaixo */
+.cartao-trava.bloqueio{text-align:center; padding:30px 20px 22px}
+.cartao-trava.bloqueio p{max-width:420px; margin-left:auto; margin-right:auto}
+.cadeado-grande{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:64px; height:64px; border-radius:50%; background:var(--rosa-nevoa); color:var(--rosa);
+}
+.cadeado-grande svg{width:30px; height:30px}
+.cartao-trava.bloqueio .cta{margin-left:auto; margin-right:auto}
 .cartao-video.trancado .mini-video img{filter:saturate(.7)}
 .cartao-video.trancado .botao-play svg{margin-left:0; width:21px; height:21px}
 @media (min-width:760px){ .cartao-trava .cta{width:auto; display:inline-flex; padding:13px 26px} }
@@ -959,7 +968,7 @@ a{text-decoration:none; color:inherit}
         Meus materiais
         <span class="seta-op">›</span>
       </button>
-      <a class="opcao" href="https://wa.me/" target="_blank" rel="noopener">
+      <a class="opcao" href="mailto:suportedigitalht@gmail.com" target="_blank" rel="noopener">
         <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 01-9 8.4 8.5 8.5 0 01-3.8-.9L3 21l2-4.9A8.4 8.4 0 1121 11.5z"/></svg></span>
         Falar com o suporte
         <span class="seta-op">›</span>
@@ -1274,25 +1283,25 @@ function montarTudo() {
   // ── vídeos: grade de miniaturas, sem título e sem número ──
   var vs = CATALOGO.videos || [];
   var seg = vs.reduce(function (t, v) { return t + v.seg; }, 0);
-  document.getElementById('numeros-videos').innerHTML =
+  var comVideos = ACESSO.tem('videos');
+  var cv = CATALOGO.compra.videos;
+  // sem a compra dos vídeos, nenhuma aula aparece: só o aviso de bloqueio com o cadeado
+  document.getElementById('numeros-videos').innerHTML = !comVideos ? '' :
     '<div class="pilula-video a"><span class="ic">' + FILME + '</span>' +
       '<span><b>' + vs.length + '</b><small>vídeos</small></span></div>' +
     '<div class="pilula-video b"><span class="ic">' + RELOGIO + '</span>' +
       '<span><b>' + Math.floor(seg / 3600) + 'h' + String(Math.round(seg % 3600 / 60)).padStart(2, '0') +
       '</b><small>no total</small></span></div>';
-  // sem a compra dos vídeos, a grade continua lá — é a vitrine —, mas cada cartão
-  // leva para o checkout, e um cartão de compra abre a aba
-  var comVideos = ACESSO.tem('videos');
-  var cv = CATALOGO.compra.videos;
   document.getElementById('trava-videos').innerHTML = comVideos ? '' :
-    '<div class="cartao-trava">' +
-      '<span class="chip rosa">' + CADEADO + ' Ainda não liberado</span>' +
-      '<h2>Assista cada brinco sendo feito, <em>do primeiro nó ao arremate</em></h2>' +
-      '<p>' + vs.length + ' confecções gravadas sem corte, cada uma com o gráfico do brinco para imprimir.</p>' +
+    '<div class="cartao-trava bloqueio">' +
+      '<span class="cadeado-grande">' + CADEADO + '</span>' +
+      '<h2>Área bloqueada</h2>' +
+      '<p>Os vídeos das confecções não fazem parte da sua compra, por isso esta área está trancada. ' +
+        'Assim que a compra dos vídeos for aprovada, as aulas aparecem aqui.</p>' +
       '<a class="cta toque" href="' + cv.link + '">Liberar os vídeos por ' + cv.preco + SETA + '</a>' +
     '</div>';
   // com gráfico, o cartão ganha o nome do brinco e o selo; sem, fica como era
-  document.getElementById('grade-videos').innerHTML = vs.map(function (v) {
+  document.getElementById('grade-videos').innerHTML = !comVideos ? '' : vs.map(function (v) {
     var g = grafico(v.id);
     return '<a class="cartao-video' + (comVideos ? '' : ' trancado') + '" href="' +
         (comVideos ? '#/video/' + v.id : cv.link) + '">' +
