@@ -55,27 +55,27 @@ const CATALOGO = {
       sub: 'Bolsinhas em trama de miçanga, com as medidas de cada peça.',
       paginas: 67, de: 'R$ 37', por: 'R$ 7,90',
       capa: 'assets/capas/bolsas.webp',
-      pdf: 'pdf/50-bolsas.pdf', checkout: 'https://pay.wiapy.com/S07v1mMgUXYa' },
+      pdf: 'pdf/50-bolsas.pdf', checkout: 'https://pay.wiapy.com/YOH8Rreo3o5b' },
     { slug: 'pulseiras', titulo: '50 Pulseiras de Miçanga',
       sub: 'Padrões étnicos, florais e geométricos tecidos em telar.',
       paginas: 51, de: 'R$ 37', por: 'R$ 5,90',
       capa: 'assets/capas/pulseiras.webp',
-      pdf: 'pdf/50-pulseiras.pdf', checkout: 'https://pay.wiapy.com/BCc75hXR6-tX' },
+      pdf: 'pdf/50-pulseiras.pdf', checkout: 'https://pay.wiapy.com/uMSvSsFhBn11' },
     { slug: 'colares', titulo: '50 Colares de Miçanga',
       sub: 'Colares de crochê com miçanga, do clássico ao colorido.',
       paginas: 51, de: 'R$ 37', por: 'R$ 5,90',
       capa: 'assets/capas/colares.webp',
-      pdf: 'pdf/50-colares.pdf', checkout: 'https://pay.wiapy.com/nYTSCxa58zDa' },
+      pdf: 'pdf/50-colares.pdf', checkout: 'https://pay.wiapy.com/WZKGko4yyyCb' },
     { slug: 'pingentes', titulo: '30 Pingentes de Miçanga',
       sub: 'Figuras tecidas para pendurar em corrente ou cordão.',
       paginas: 31, de: 'R$ 27', por: 'R$ 4,90',
       capa: 'assets/capas/pingentes.webp',
-      pdf: 'pdf/30-pingentes.pdf', checkout: 'https://pay.wiapy.com/SIB1eqJc1Y7n' },
+      pdf: 'pdf/30-pingentes.pdf', checkout: 'https://pay.wiapy.com/zORuhG_La39-' },
     { slug: 'tiaras', titulo: '16 Tiaras de Miçanga',
       sub: 'Arcos forrados de miçanga, do folclórico ao colorido.',
       paginas: 17, de: 'R$ 27', por: 'R$ 3,90',
       capa: 'assets/capas/tiaras.webp',
-      pdf: 'pdf/16-tiaras.pdf', checkout: 'https://pay.wiapy.com/ZEZ3hI1cKH3R' },
+      pdf: 'pdf/16-tiaras.pdf', checkout: 'https://pay.wiapy.com/wCBOlLHfvLlt' },
   ],
 
   // Onde se compra o que não veio no pedido. `bonus` é o Completo com 30% (R$ 16,90):
@@ -83,7 +83,7 @@ const CATALOGO = {
   // checkout próprio dos vídeos, com o mesmo preço do upsell.
   compra: {
     bonus: { preco: 'R$ 16,90', link: 'https://pay.wiapy.com/I2XmXHKdXFVQ' },
-    videos: { preco: 'R$ 19,90', link: 'https://pay.wiapy.com/3d3HmeQBQa9S' },
+    videos: { preco: 'R$ 19,90', link: 'https://pay.wiapy.com/checkout/6aa1e01db0c1c48195cf0ef8' },
   },
 
   // A aba de VÍDEOS. Não se chama "aula" em lugar nenhum, e os vídeos não são
