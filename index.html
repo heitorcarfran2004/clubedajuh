@@ -142,14 +142,24 @@ form.addEventListener('submit', function (e) {
   botao.disabled = true;
   botao.textContent = 'ENTRANDO…';
   ACESSO.consultar(email).then(function (r) {
+    // só entra quem tem compra registrada com esse e-mail
+    if (!r.registrado) {
+      liberarBotao();
+      return mostrarErro('Não encontramos nenhuma compra com este e-mail. Use o mesmo e-mail do pagamento. ' +
+        'Se o problema continuar, escreva para suportedigitalht@gmail.com.');
+    }
     ACESSO.entrar(email, r.itens);
     location.href = 'app.html';
   }).catch(function () {
-    // fora do ar não pode trancar quem comprou: entra com o básico e o app confere de novo
-    ACESSO.entrar(email, ACESSO.SEM_REGISTRO);
-    location.href = 'app.html';
+    liberarBotao();
+    mostrarErro('Não conseguimos conferir seu acesso agora. Tente de novo em instantes.');
   });
 });
+
+function liberarBotao() {
+  botao.disabled = false;
+  botao.textContent = 'ENTRAR';
+}
 
 function mostrarErro(msg) {
   erro.textContent = msg;

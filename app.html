@@ -1153,6 +1153,9 @@ function conferirAcesso() {
   ultimaConferencia = Date.now();
   var email = ACESSO.email();
   ACESSO.consultar(email).then(function (r) {
+    // e-mail sem compra registrada só está aqui se entrou antes da trava do login (19/09),
+    // como as clientes do GGCheckout: mantém o que o aparelho já liberava, sem deslogar
+    if (!r.registrado) return;
     var antes = JSON.stringify(ACESSO.itens().slice().sort());
     if (JSON.stringify(r.itens.slice().sort()) === antes) return;
     ACESSO.entrar(email, r.itens);

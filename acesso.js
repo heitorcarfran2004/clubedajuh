@@ -13,12 +13,10 @@
 var ACESSO = (function () {
   var URL_ACESSO = 'https://dxybmayffxvepmwbyezc.supabase.co/functions/v1/membros-acesso';
 
-  // Quem comprou de 04/09 a 09/09/2026 pagou no GGCheckout, antes da Wiapy, e não está
-  // na base. Até essa lista ser importada, e-mail SEM REGISTRO entra com a coleção e os
-  // bônus — que é o que todo mundo via antes da integração. Order bumps e vídeos só
-  // abrem para quem tem a compra registrada.
-  // Depois de importar o GGCheckout: trocar por [] para barrar e-mail sem compra.
-  var SEM_REGISTRO = ['principal', 'bonus'];
+  // E-mail sem compra registrada não entra (19/09/2026). Quem pagou no GGCheckout de
+  // 04/09 a 09/09 ainda não está na base: quem já estava logado no aparelho continua
+  // (o app não desloga, ver conferirAcesso), mas login novo depende de importar a lista.
+  var SEM_REGISTRO = [];
 
   function lerLocal(chave) { try { return localStorage.getItem(chave); } catch (e) { return null; } }
   function gravarLocal(chave, v) { try { localStorage.setItem(chave, v); } catch (e) {} }
