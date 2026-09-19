@@ -19,8 +19,19 @@ export const ORDERBUMPS: Record<string, string> = {
   // 6aa10794b0c1c48195afbb8b = Entrega Expressa no WhatsApp: não é material, não libera nada
 };
 
-// upsell (R$ 19,90) e downsell (R$ 9,90) liberam a mesma coisa
-export const CHECKOUTS_VIDEOS = ["6aa1e01db0c1c48195cf0ef8", "6aa1e08aa3b1f406fa7ab24d"];
+// Checkouts próprios de cada extra, criados em 19/09/2026 para o botão de desbloquear
+// do app (quem não levou no pedido compra por aqui). Um produto por checkout.
+export const CHECKOUTS_EXTRAS: Record<string, string> = {
+  "6aae26945c2bd84427c13d76": "bolsas",     // pay.wiapy.com/S07v1mMgUXYa
+  "6aae26e8cf13c78c723eec6f": "pulseiras",  // pay.wiapy.com/BCc75hXR6-tX
+  "6aae26e88ac21a43377a3160": "colares",    // pay.wiapy.com/nYTSCxa58zDa
+  "6aae26e85c2bd84427c13fc5": "pingentes",  // pay.wiapy.com/SIB1eqJc1Y7n
+  "6aae26e85c2bd84427c13fd1": "tiaras",     // pay.wiapy.com/ZEZ3hI1cKH3R
+};
+
+// upsell (R$ 19,90), downsell (R$ 9,90) e o checkout próprio dos vídeos no app
+// (pay.wiapy.com/3d3HmeQBQa9S) liberam a mesma coisa
+export const CHECKOUTS_VIDEOS = ["6aa1e01db0c1c48195cf0ef8", "6aa1e08aa3b1f406fa7ab24d", "6aae26e9f72e338d159b10c0"];
 
 // O payload documentado não traz a oferta. Procura em qualquer lugar do corpo um dos
 // códigos conhecidos; sem achar, decide pelo valor. NA DÚVIDA LIBERA OS BÔNUS: travar
@@ -47,8 +58,11 @@ export function itensDoPagamento(corpo: any): { item: string; origem: string }[]
     }
   } else if (CHECKOUTS_VIDEOS.includes(ck)) {
     out.push({ item: "videos", origem: ck });
+  } else if (CHECKOUTS_EXTRAS[ck]) {
+    out.push({ item: CHECKOUTS_EXTRAS[ck], origem: ck });
   } else if (ORDERBUMPS[ck]) {
-    // o order bump comprado sozinho, pelo link avulso (é o botão de compra dentro do app)
+    // o order bump comprado sozinho, pelo link avulso (era o botão do app antes dos
+    // checkouts próprios; fica para quem ainda tiver o link antigo)
     out.push({ item: ORDERBUMPS[ck], origem: ck });
   }
   return out;
