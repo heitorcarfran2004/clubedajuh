@@ -152,6 +152,56 @@ a{text-decoration:none; color:inherit}
 .cartao h4{font-size:12.5px; font-weight:700; line-height:1.28; margin:9px 3px 6px; min-height:32px}
 .cartao .n{font-size:10.5px; font-weight:700; color:var(--cinza-claro); margin-left:3px}
 
+/* ── o que ela ainda não comprou ──
+   A capa continua visível (é ela que vende), só com um véu e o cadeado por cima. */
+.cartao.trancado .miniatura img{filter:saturate(.55) brightness(.92)}
+.tranca{
+  position:absolute; inset:0; margin:auto; width:40px; height:40px; border-radius:50%;
+  background:rgba(255,255,255,.95); color:var(--rosa);
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 6px 18px rgba(16,26,31,.28);
+}
+.tranca svg{width:19px; height:19px}
+.faixa-compra{
+  display:flex; align-items:center; gap:12px; margin:0 0 12px;
+  background:var(--branco); border-radius:16px; padding:12px 14px;
+  box-shadow:var(--sombra); border:1.5px dashed var(--rosa-claro);
+}
+.faixa-compra .ic{
+  width:36px; height:36px; border-radius:11px; flex:0 0 auto;
+  background:var(--rosa-nevoa); color:var(--rosa);
+  display:flex; align-items:center; justify-content:center;
+}
+.faixa-compra .ic svg{width:18px; height:18px}
+.faixa-compra .txt{flex:1; min-width:0}
+.faixa-compra b{display:block; font-size:14px; font-weight:800}
+.faixa-compra small{display:block; font-size:11.5px; font-weight:600; color:var(--cinza); margin-top:1px}
+.faixa-compra .preco{
+  flex:0 0 auto; background:var(--rosa); color:#fff; font-size:13px; font-weight:800;
+  padding:8px 12px; border-radius:11px; box-shadow:0 4px 12px rgba(229,68,110,.28);
+}
+/* a aba de vídeos sem a compra: um cartão de venda antes da grade */
+.cartao-trava{
+  position:relative; overflow:hidden; margin:0 0 20px;
+  background:var(--branco); border-radius:22px; padding:20px 18px 18px;
+  box-shadow:var(--sombra-alta);
+}
+.cartao-trava::before{
+  content:""; position:absolute; right:-70px; top:-70px; width:190px; height:190px;
+  border-radius:50%; background:var(--rosa-nevoa); z-index:0;
+}
+.cartao-trava > *{position:relative; z-index:1}
+.cartao-trava .chip svg{width:12px; height:12px}
+.cartao-trava h2{
+  font-family:var(--serif); font-weight:700; font-size:21px; line-height:1.2;
+  letter-spacing:-.015em; margin-top:11px;
+}
+.cartao-trava h2 em{font-style:italic; color:var(--rosa)}
+.cartao-trava p{margin-top:7px; font-size:13.5px; line-height:1.5; color:var(--cinza)}
+.cartao-video.trancado .mini-video img{filter:saturate(.7)}
+.cartao-video.trancado .botao-play svg{margin-left:0; width:21px; height:21px}
+@media (min-width:760px){ .cartao-trava .cta{width:auto; display:inline-flex; padding:13px 26px} }
+
 /* ── lista horizontal (ofertas e biblioteca) ── */
 .lista{display:flex; flex-direction:column; gap:11px}
 .linha{
@@ -823,6 +873,7 @@ a{text-decoration:none; color:inherit}
       <h2>Seus bônus</h2>
       <span id="conta-bonus"></span>
     </div>
+    <div id="aviso-bonus"></div>
     <div class="trilho" id="trilho-bonus"></div>
 
     <div class="cabeca-secao"><h2>Produtos Extras</h2></div>
@@ -850,6 +901,7 @@ a{text-decoration:none; color:inherit}
       <p>Brincos feitos do começo ao fim, sem corte. Dá para acompanhar montando junto.</p>
       <div class="numeros-videos" id="numeros-videos"></div>
     </header>
+    <div id="trava-videos"></div>
     <div class="grade-videos" id="grade-videos"></div>
   </div>
 </div>
@@ -1017,6 +1069,11 @@ a{text-decoration:none; color:inherit}
   </div>
 </nav>
 
+<script src="acesso.js"></script>
+<script>
+// sem login, volta para a tela de entrada: o app não abre pela URL direta
+if (!ACESSO.email()) location.replace('index.html');
+</script>
 <script src="catalogo.js"></script>
 <script>
 /* ══════════════════════════════════════════════════════════════════════
@@ -1034,11 +1091,17 @@ function ir(aba) { location.hash = aba === 'inicio' ? '#/' : '#/' + aba; }
 
 function rota() {
   var p = (location.hash || '#/').replace(/^#/, '').split('/').filter(Boolean);
+  // material que ela não comprou não abre nem pelo link: cai na tela onde se compra
   if (p[0] === 'ler' && CATALOGO.porSlug(p[1])) {
+    if (!ACESSO.tem(CATALOGO.itemDe(p[1]))) { mostrar('inicio'); return; }
     abrirLeitor(p[1], p[2] ? parseInt(p[2], 10) : null);
     return;
   }
-  if (p[0] === 'video' && p[1]) { abrirVideo(p[1]); return; }
+  if (p[0] === 'video' && p[1]) {
+    if (!ACESSO.tem('videos')) { mostrar('videos'); return; }
+    abrirVideo(p[1]);
+    return;
+  }
   mostrar(TELAS[p[0]] ? p[0] : 'inicio');
 }
 window.addEventListener('hashchange', rota);
@@ -1068,7 +1131,30 @@ function mostrar(aba) {
   window.scrollTo(0, 0);
 }
 
-function sair() { try { sessionStorage.removeItem('membro'); } catch (e) {} location.href = 'index.html'; }
+function sair() { ACESSO.sair(); location.href = 'index.html'; }
+
+/* ══════════════════════════════════════════════════════════════════════
+   ACESSO — confere de novo o que ela comprou ao abrir o app e ao voltar para ele.
+   É o que libera na hora quem saiu para o checkout de um extra e voltou: o webhook
+   da Wiapy grava a compra e a próxima conferência já traz o item.
+   ══════════════════════════════════════════════════════════════════════ */
+var ultimaConferencia = 0;
+function conferirAcesso() {
+  if (Date.now() - ultimaConferencia < 20000) return;
+  ultimaConferencia = Date.now();
+  var email = ACESSO.email();
+  ACESSO.consultar(email).then(function (r) {
+    var antes = JSON.stringify(ACESSO.itens().slice().sort());
+    if (JSON.stringify(r.itens.slice().sort()) === antes) return;
+    ACESSO.entrar(email, r.itens);
+    montarTudo();
+    // o leitor e o vídeo abertos não são remontados: só a tela atrás deles
+    if (!/^#\/(ler|video)\//.test(location.hash)) rota();
+  }).catch(function () { /* fora do ar: segue com o que já sabia */ });
+}
+document.addEventListener('visibilitychange', function () {
+  if (document.visibilityState === 'visible') conferirAcesso();
+});
 
 /* ══════════════════════════════════════════════════════════════════════
    PROGRESSO
@@ -1110,8 +1196,7 @@ var ESTRELAS = { 'Fácil':'★', 'Médio':'★★', 'Avançado':'★★★' };
 function grafico(id) { return (CATALOGO.graficos || {})[id]; }
 
 function montarTudo() {
-  var email = '';
-  try { email = sessionStorage.getItem('membro') || ''; } catch (e) {}
+  var email = ACESSO.email();
   var nome = email ? email.split('@')[0].replace(/[._-]+/g, ' ') : '';
   if (nome) nome = nome.charAt(0).toUpperCase() + nome.slice(1);
 
@@ -1142,22 +1227,35 @@ function montarTudo() {
       '</div>' +
     '</a>';
 
-  // ── carrossel dos bônus ──
-  document.getElementById('conta-bonus').textContent = CATALOGO.bonus.length + ' liberados';
+  // ── carrossel dos bônus. Quem levou o Essencial vê os seis com cadeado, e cada um
+  //    leva para o checkout do Completo — é a vitrine do que ficou de fora ──
+  var comBonus = ACESSO.tem('bonus');
+  var cb = CATALOGO.compra.bonus;
+  document.getElementById('conta-bonus').textContent =
+    comBonus ? CATALOGO.bonus.length + ' liberados' : 'Coleção Completa';
+  document.getElementById('aviso-bonus').innerHTML = comBonus ? '' :
+    '<a class="faixa-compra toque" href="' + cb.link + '">' +
+      '<span class="ic">' + CADEADO + '</span>' +
+      '<span class="txt"><b>Libere os ' + CATALOGO.bonus.length + ' bônus</b>' +
+        '<small>Eles vêm na Coleção Completa</small></span>' +
+      '<span class="preco">' + cb.preco + '</span>' +
+    '</a>';
   document.getElementById('trilho-bonus').innerHTML = CATALOGO.bonus.map(function (b, i) {
-    return '<a class="cartao toque" href="#/ler/' + b.slug + '">' +
+    return '<a class="cartao toque' + (comBonus ? '' : ' trancado') + '" href="' +
+        (comBonus ? '#/ler/' + b.slug : cb.link) + '">' +
       '<div class="miniatura"><span class="selo">BÔNUS ' + (i + 1) + '</span>' +
         '<img src="' + b.capa + '" srcset="' + peq(b.capa) + ' 200w, ' + b.capa + ' 340w" ' +
-          'sizes="(min-width:760px) 168px, 132px" alt="" loading="lazy" width="132" height="187"></div>' +
+          'sizes="(min-width:760px) 168px, 132px" alt="" loading="lazy" width="132" height="187">' +
+        (comBonus ? '' : '<span class="tranca">' + CADEADO + '</span>') + '</div>' +
       '<h4>' + b.titulo + '</h4>' +
       '<span class="n">' + b.paginas + ' páginas</span>' +
     '</a>';
   }).join('');
 
   // ── produtos extras: miniatura à esquerda; nome, páginas e botão empilhados à direita.
-  //    liberado = abre no leitor e nao mostra preco; senao vai para o checkout com o valor ──
+  //    comprado = abre no leitor e nao mostra preco; senao vai para o checkout com o valor ──
   var ofertas = CATALOGO.ofertas.map(function (o) {
-    var livre = o.liberado;
+    var livre = ACESSO.tem(o.slug);
     return '<a class="linha toque" href="' + (livre ? '#/ler/' + o.slug : o.checkout) + '">' +
       '<div class="mini"><img src="' + peq(o.capa) + '" alt="" loading="lazy" width="89" height="126"></div>' +
       '<div class="dados">' +
@@ -1182,14 +1280,26 @@ function montarTudo() {
     '<div class="pilula-video b"><span class="ic">' + RELOGIO + '</span>' +
       '<span><b>' + Math.floor(seg / 3600) + 'h' + String(Math.round(seg % 3600 / 60)).padStart(2, '0') +
       '</b><small>no total</small></span></div>';
+  // sem a compra dos vídeos, a grade continua lá — é a vitrine —, mas cada cartão
+  // leva para o checkout, e um cartão de compra abre a aba
+  var comVideos = ACESSO.tem('videos');
+  var cv = CATALOGO.compra.videos;
+  document.getElementById('trava-videos').innerHTML = comVideos ? '' :
+    '<div class="cartao-trava">' +
+      '<span class="chip rosa">' + CADEADO + ' Ainda não liberado</span>' +
+      '<h2>Assista cada brinco sendo feito, <em>do primeiro nó ao arremate</em></h2>' +
+      '<p>' + vs.length + ' confecções gravadas sem corte, cada uma com o gráfico do brinco para imprimir.</p>' +
+      '<a class="cta toque" href="' + cv.link + '">Liberar os vídeos por ' + cv.preco + SETA + '</a>' +
+    '</div>';
   // com gráfico, o cartão ganha o nome do brinco e o selo; sem, fica como era
   document.getElementById('grade-videos').innerHTML = vs.map(function (v) {
     var g = grafico(v.id);
-    return '<a class="cartao-video" href="#/video/' + v.id + '">' +
+    return '<a class="cartao-video' + (comVideos ? '' : ' trancado') + '" href="' +
+        (comVideos ? '#/video/' + v.id : cv.link) + '">' +
       '<span class="mini-video">' +
         '<img src="assets/videos/' + v.id + '.webp" alt="" loading="lazy" width="640" height="360">' +
         (g ? '<span class="selo-grafico">' + CONTAS + 'GRÁFICO</span>' : '') +
-        '<span class="botao-play">' + PLAY_CHEIO + '</span>' +
+        '<span class="botao-play">' + (comVideos ? PLAY_CHEIO : CADEADO) + '</span>' +
         '<span class="tempo">' + duracao(v.seg) + '</span>' +
       '</span>' +
       '<span class="pe-video">' +
@@ -1202,10 +1312,10 @@ function montarTudo() {
     '</a>';
   }).join('');
 
-  // ── biblioteca: o principal e os bônus na mesma lista ──
-  // enquanto os extras estao liberados, eles contam como material da aluna
-  var tudo = [CATALOGO.principal].concat(CATALOGO.bonus)
-    .concat(CATALOGO.ofertas.filter(function (o) { return o.liberado; }));
+  // ── biblioteca: só o que ela tem — o principal, os bônus se levou o Completo e os
+  //    extras que comprou ──
+  var tudo = [CATALOGO.principal].concat(comBonus ? CATALOGO.bonus : [])
+    .concat(CATALOGO.ofertas.filter(function (o) { return ACESSO.tem(o.slug); }));
   document.getElementById('conta-biblioteca').textContent =
     tudo.length + ' materiais · ' + tudo.reduce(function (s, l) { return s + l.paginas; }, 0) + ' páginas no total';
   document.getElementById('lista-biblioteca').innerHTML = tudo.map(function (l) {
@@ -1680,6 +1790,7 @@ var guiaMontado = false;
 try { if (localStorage.getItem('guia-visto')) document.getElementById('fab-pisca').style.display = 'none'; } catch (e) {}
 
 rota();
+conferirAcesso();
 // ao sair do leitor o progresso mudou: remonta os cards para a barra acompanhar
 window.addEventListener('hashchange', function () {
   if (!/^#\/ler\//.test(location.hash)) montarTudo();

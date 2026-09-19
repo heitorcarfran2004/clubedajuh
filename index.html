@@ -77,6 +77,7 @@ button{
   box-shadow:0 8px 20px rgba(229,68,110,.34); transition:transform .12s, opacity .12s;
 }
 button:active{transform:scale(.97); opacity:.92}
+button[disabled]{opacity:.7; cursor:default}
 
 .link{
   display:block; text-align:center; margin-top:18px; font-size:13px;
@@ -118,30 +119,36 @@ button:active{transform:scale(.97); opacity:.92}
   </form>
 
   <p class="aviso">
-    <b>Versão de validação.</b> A verificação ainda não está ligada:
-    hoje qualquer e-mail abre o app.
+    Comprou agora? O acesso é liberado assim que o pagamento é aprovado.
   </p>
 </main>
 
+<script src="acesso.js"></script>
 <script>
-// LOGIN AINDA NAO E REAL. Isso aqui so confere o formato do e-mail e segue para o app,
-// para dar para navegar e testar as telas. Quando a verificacao entrar, o submit vira uma
-// chamada ao backend que pergunta se aquele e-mail comprou, e o app.html passa a exigir
-// sessao — ver o README.
+// O login pergunta à Edge Function o que esse e-mail comprou (ACESSO.consultar) e guarda
+// a resposta: é ela que decide o que o app abre. Sem senha: o e-mail é a chave.
 var form = document.getElementById('form');
 var erro = document.getElementById('erro');
+var botao = form.querySelector('button');
+
+// quem já entrou neste aparelho vai direto para o app
+if (ACESSO.email()) location.replace('app.html');
 
 form.addEventListener('submit', function (e) {
   e.preventDefault();
-  var email = document.getElementById('email').value.trim();
+  var email = document.getElementById('email').value.trim().toLowerCase();
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return mostrarErro('Digite um e-mail válido.');
 
-  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
-    return mostrarErro('Digite um e-mail válido.');
-  }
-
-  // guarda so para a home conseguir cumprimentar pelo nome do e-mail
-  try { sessionStorage.setItem('membro', email); } catch (x) {}
-  location.href = 'app.html';
+  botao.disabled = true;
+  botao.textContent = 'ENTRANDO…';
+  ACESSO.consultar(email).then(function (r) {
+    ACESSO.entrar(email, r.itens);
+    location.href = 'app.html';
+  }).catch(function () {
+    // fora do ar não pode trancar quem comprou: entra com o básico e o app confere de novo
+    ACESSO.entrar(email, ACESSO.SEM_REGISTRO);
+    location.href = 'app.html';
+  });
 });
 
 function mostrarErro(msg) {

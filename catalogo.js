@@ -40,15 +40,12 @@ const CATALOGO = {
       paginas: 8, capa: 'assets/capas/b5.webp', pdf: 'pdf/bonus-5-compras.pdf' },
   ],
 
-  // "Produtos Extras" — os orderbumps da coleção de miçanga.
+  // "Produtos Extras" — os order bumps da coleção de miçanga.
   //
-  // `liberado: true` = de graça enquanto a integração não sai. Nesse estado o card
-  // mostra GRÁTIS no lugar do preço, o botão ABRE o material no leitor em vez de ir para
-  // o checkout, e o produto também aparece na Biblioteca.
-  //
-  // QUANDO A WIAPY ENTRAR: troque `liberado` para false em cada um. O preço volta, o
-  // botão vira checkout de novo e o produto sai da Biblioteca de quem não comprou. É uma
-  // linha por produto, sem tocar em layout. E aí o `checkout` precisa do link real.
+  // Quem comprou (o slug está nos itens do ACESSO, ver acesso.js) vê "Abrir agora" e
+  // o material na Biblioteca. Quem não comprou vê o preço e o botão vai para o
+  // `checkout`: o link AVULSO do próprio order bump na Wiapy, que o webhook reconhece
+  // pelo ID (supabase/functions/wiapy-webhook/mapa.ts). `por` é o preço desse link.
   //
   // `paginas` inclui a capa, que é a página 1 de cada um.
   ofertas: [
@@ -56,30 +53,38 @@ const CATALOGO = {
     // receita ocupa de 1 a 3 paginas — ficha, pecas com medida e montagem.
     { slug: 'bolsas', titulo: '50 Bolsas de Miçanga',
       sub: 'Bolsinhas em trama de miçanga, com as medidas de cada peça.',
-      paginas: 67, de: 'R$ 37', por: 'R$ 17,90', liberado: true,
+      paginas: 67, de: 'R$ 37', por: 'R$ 7,90',
       capa: 'assets/capas/bolsas.webp',
-      pdf: 'pdf/50-bolsas.pdf', checkout: 'TROCAR-CHECKOUT-BOLSAS' },
+      pdf: 'pdf/50-bolsas.pdf', checkout: 'https://pay.wiapy.com/YOH8Rreo3o5b' },
     { slug: 'pulseiras', titulo: '50 Pulseiras de Miçanga',
       sub: 'Padrões étnicos, florais e geométricos tecidos em telar.',
-      paginas: 51, de: 'R$ 37', por: 'R$ 17,90', liberado: true,
+      paginas: 51, de: 'R$ 37', por: 'R$ 5,90',
       capa: 'assets/capas/pulseiras.webp',
-      pdf: 'pdf/50-pulseiras.pdf', checkout: 'TROCAR-CHECKOUT-PULSEIRAS' },
+      pdf: 'pdf/50-pulseiras.pdf', checkout: 'https://pay.wiapy.com/uMSvSsFhBn11' },
     { slug: 'colares', titulo: '50 Colares de Miçanga',
       sub: 'Colares de crochê com miçanga, do clássico ao colorido.',
-      paginas: 51, de: 'R$ 37', por: 'R$ 17,90', liberado: true,
+      paginas: 51, de: 'R$ 37', por: 'R$ 5,90',
       capa: 'assets/capas/colares.webp',
-      pdf: 'pdf/50-colares.pdf', checkout: 'TROCAR-CHECKOUT-COLARES' },
+      pdf: 'pdf/50-colares.pdf', checkout: 'https://pay.wiapy.com/WZKGko4yyyCb' },
     { slug: 'pingentes', titulo: '30 Pingentes de Miçanga',
       sub: 'Figuras tecidas para pendurar em corrente ou cordão.',
-      paginas: 31, de: 'R$ 27', por: 'R$ 12,90', liberado: true,
+      paginas: 31, de: 'R$ 27', por: 'R$ 4,90',
       capa: 'assets/capas/pingentes.webp',
-      pdf: 'pdf/30-pingentes.pdf', checkout: 'TROCAR-CHECKOUT-PINGENTES' },
+      pdf: 'pdf/30-pingentes.pdf', checkout: 'https://pay.wiapy.com/zORuhG_La39-' },
     { slug: 'tiaras', titulo: '16 Tiaras de Miçanga',
       sub: 'Arcos forrados de miçanga, do folclórico ao colorido.',
-      paginas: 17, de: 'R$ 27', por: 'R$ 12,90', liberado: true,
+      paginas: 17, de: 'R$ 27', por: 'R$ 3,90',
       capa: 'assets/capas/tiaras.webp',
-      pdf: 'pdf/16-tiaras.pdf', checkout: 'TROCAR-CHECKOUT-TIARAS' },
+      pdf: 'pdf/16-tiaras.pdf', checkout: 'https://pay.wiapy.com/wCBOlLHfvLlt' },
   ],
+
+  // Onde se compra o que não veio no pedido. `bonus` é o Completo com 30% (R$ 16,90):
+  // quem levou o Essencial compra de novo e o webhook libera os bônus. `videos` é o
+  // checkout do upsell, que também funciona como link direto.
+  compra: {
+    bonus: { preco: 'R$ 16,90', link: 'https://pay.wiapy.com/I2XmXHKdXFVQ' },
+    videos: { preco: 'R$ 19,90', link: 'https://pay.wiapy.com/checkout/6aa1e01db0c1c48195cf0ef8' },
+  },
 
   // A aba de VÍDEOS. Não se chama "aula" em lugar nenhum, e os vídeos não são
   // numerados: no Wistia eles estão salvos como "aula 28", "aula 29"..., mas isso é
@@ -146,9 +151,14 @@ const CATALOGO = {
   // </graficos>
 };
 
-// atalho para o leitor achar qualquer livro pelo slug, seja principal ou bonus
-// o leitor acha qualquer material pelo slug: principal, bonus ou extra liberado
+// o leitor acha qualquer material pelo slug: principal, bônus ou extra
 CATALOGO.porSlug = (slug) =>
   slug === 'principal' ? CATALOGO.principal
     : CATALOGO.bonus.find(b => b.slug === slug)
-    || CATALOGO.ofertas.find(o => o.slug === slug && o.liberado);
+    || CATALOGO.ofertas.find(o => o.slug === slug);
+
+// o item de acesso que libera cada material (os itens vêm do acesso.js)
+CATALOGO.itemDe = (slug) =>
+  slug === 'principal' ? 'principal'
+    : CATALOGO.bonus.some(b => b.slug === slug) ? 'bonus'
+    : slug;

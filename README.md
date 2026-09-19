@@ -1,9 +1,44 @@
 # Miçangas da Juh — app de membros
 
-Área de entrega do produto. **Primeira versão: para validar funcionamento e visual.**
-Nada de integração está ligado ainda — o que falta está listado no fim.
+Área de entrega do produto, em produção em clubedajuh.vercel.app. O acesso é ligado à
+Wiapy desde 19/09/2026 — ver **Acesso e Wiapy**, logo abaixo.
 
     node servidor.cjs     # http://localhost:4190
+
+## Acesso e Wiapy
+
+Cada venda aprovada na Wiapy vira linhas em `membros_compras` (Supabase do Cofre de
+Ofertas, projeto `dxybmayffxvepmwbyezc`, tabelas com prefixo `membros_`): um e-mail, um
+item liberado, o pagamento e o status. O login pergunta à Edge Function
+`membros-acesso` o que aquele e-mail tem, e o app mostra conforme.
+
+    Wiapy ──webhook──▶ wiapy-webhook ──▶ membros_compras ◀── membros-acesso ◀── login / app
+
+| item | libera | vem de |
+|---|---|---|
+| `principal` | os 100 projetos | checkout principal, qualquer oferta |
+| `bonus` | os 6 bônus | ofertas do Completo (R$ 25,90, 16,90 e 8,90) — o Essencial de R$ 10 não traz |
+| `bolsas` … `tiaras` | cada Produto Extra | order bump no checkout, ou o link avulso dele (botão do app) |
+| `videos` | a aba de vídeos | upsell (R$ 19,90) ou downsell (R$ 9,90) |
+
+- **A regra mora num lugar só:** `supabase/functions/wiapy-webhook/mapa.ts`, com os IDs
+  de checkout, oferta e order bump. Produto novo na Wiapy = uma linha ali + redeploy.
+- **Webhook na Wiapy:** Integrações → "Área de membros Miçangas (clubedajuh)", em
+  **Todos os checkouts** (sem isso o order bump comprado avulso não chega), eventos
+  aprovado, estornado e chargeback. O token vai no header `Authorization` e fica em
+  `membros_config.wiapy_token`. Estorno e chargeback tiram o item.
+- **`membros_eventos`** guarda o corpo cru de toda venda da miçanga, para conferir e
+  reprocessar se o formato mudar. Venda de outros produtos entra sem o corpo.
+- **Vendas antigas:** importadas em 19/09 pelo `scripts/membros-importar.cjs`, que
+  reenvia cada venda ao próprio webhook (a regra não duplica).
+- **GGCheckout (04 a 09/09) NÃO está na base.** Por isso e-mail sem registro entra com
+  `principal` + `bonus` (`SEM_REGISTRO` no `acesso.js`). Order bumps e vídeos só abrem
+  com compra registrada. Importada a lista do GGCheckout, trocar `SEM_REGISTRO` por `[]`.
+- **O app confere de novo** ao abrir e sempre que volta a ficar visível — quem sai para o
+  checkout de um extra e volta já encontra liberado.
+- **É trava de tela, não de arquivo:** páginas e PDFs são estáticos e abrem por URL
+  direta. E login só por e-mail não é segredo: quem souber o e-mail de uma aluna entra
+  como ela. Se isso pesar, link mágico ou código de 6 dígitos por e-mail.
 
 ## As telas
 
@@ -161,26 +196,11 @@ texto escrito no HTML: para acrescentar um bônus ou trocar uma oferta, mexe-se 
 
 ## O que ainda não está ligado
 
-**Login.** O acesso é **só por e-mail**, sem senha — a ideia é que a pessoa entre com o
-mesmo e-mail da compra. Hoje o campo só confere o formato: qualquer e-mail entra, e o
-`app.html` não verifica sessão nenhuma, então quem abrir a URL direto entra sem passar
-pelo login.
-
-Quando a verificação entrar, o submit vira uma chamada ao backend perguntando se aquele
-e-mail consta como comprador. **Login só por e-mail não é segredo**: quem souber o e-mail
-de uma aluna entra na conta dela. Se isso incomodar, o caminho usual sem voltar a ter
-senha é mandar um link mágico ou um código de 6 dígitos para o e-mail digitado.
-
 **PDFs.** Ficam em `arquivos/`, que está no `.gitignore`: a coleção sozinha tem 241 MB e
 os cinco bônus somam mais 100 MB. Localmente o botão de baixar funciona porque os
 arquivos estão lá; **em produção esse caminho não existe** e o botão vai dar 404. Antes
 de subir, os PDFs precisam ir para um storage e o campo `pdf` do catálogo virar a URL de
 lá — de preferência assinada e com validade, senão o link vaza e o produto circula.
-
-**Orderbumps.** Os três preços e os `checkout: 'TROCAR-CHECKOUT-...'` são provisórios.
-Quando o webhook da Wiapy entrar, o que muda é: o link vira a oferta real, e o app passa
-a saber o que a pessoa já comprou — hoje ele mostra tudo para todo mundo, e as ofertas
-aparecem mesmo para quem já as tem.
 
 **Capas das ofertas.** São páginas internas dos outros produtos, não capas de verdade.
 Funciona para validar, mas capa própria converte melhor.
