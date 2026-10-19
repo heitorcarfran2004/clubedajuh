@@ -2,7 +2,7 @@
 //   node servidor.cjs   ->  http://localhost:4190
 const http = require('http'), fs = require('fs'), path = require('path');
 const TIPOS = { '.html':'text/html; charset=utf-8', '.webp':'image/webp', '.png':'image/png',
-  '.jpg':'image/jpeg', '.css':'text/css', '.js':'text/javascript', '.svg':'image/svg+xml', '.pdf':'application/pdf' };
+  '.jpg':'image/jpeg', '.css':'text/css', '.js':'text/javascript', '.svg':'image/svg+xml', '.pdf':'application/pdf', '.json':'application/json' };
 http.createServer((req, res) => {
   let p = decodeURIComponent(req.url.split('?')[0]);
   // imita o cleanUrls da Vercel: /promo serve promo.html

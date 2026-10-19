@@ -53,30 +53,58 @@ const CATALOGO = {
     // receita ocupa de 1 a 3 paginas — ficha, pecas com medida e montagem.
     { slug: 'bolsas', titulo: '50 Bolsas de Miçanga',
       sub: 'Bolsinhas em trama de miçanga, com as medidas de cada peça.',
-      paginas: 67, de: 'R$ 37', por: 'R$ 7,90',
+      paginas: 67, de: 'R$ 37', por: 'R$ 15,80',
       capa: 'assets/capas/bolsas.webp',
-      pdf: 'pdf/50-bolsas.pdf', checkout: 'https://pay.wiapy.com/YOH8Rreo3o5b' },
+      pdf: 'pdf/50-bolsas.pdf', checkout: 'https://pay.wiapy.com/S07v1mMgUXYa' },
     { slug: 'pulseiras', titulo: '50 Pulseiras de Miçanga',
       sub: 'Padrões étnicos, florais e geométricos tecidos em telar.',
-      paginas: 51, de: 'R$ 37', por: 'R$ 5,90',
+      paginas: 51, de: 'R$ 37', por: 'R$ 11,80',
       capa: 'assets/capas/pulseiras.webp',
-      pdf: 'pdf/50-pulseiras.pdf', checkout: 'https://pay.wiapy.com/uMSvSsFhBn11' },
+      pdf: 'pdf/50-pulseiras.pdf', checkout: 'https://pay.wiapy.com/BCc75hXR6-tX' },
     { slug: 'colares', titulo: '50 Colares de Miçanga',
       sub: 'Colares de crochê com miçanga, do clássico ao colorido.',
-      paginas: 51, de: 'R$ 37', por: 'R$ 5,90',
+      paginas: 51, de: 'R$ 37', por: 'R$ 11,80',
       capa: 'assets/capas/colares.webp',
-      pdf: 'pdf/50-colares.pdf', checkout: 'https://pay.wiapy.com/WZKGko4yyyCb' },
+      pdf: 'pdf/50-colares.pdf', checkout: 'https://pay.wiapy.com/nYTSCxa58zDa' },
     { slug: 'pingentes', titulo: '30 Pingentes de Miçanga',
       sub: 'Figuras tecidas para pendurar em corrente ou cordão.',
-      paginas: 31, de: 'R$ 27', por: 'R$ 4,90',
+      paginas: 31, de: 'R$ 27', por: 'R$ 9,80',
       capa: 'assets/capas/pingentes.webp',
-      pdf: 'pdf/30-pingentes.pdf', checkout: 'https://pay.wiapy.com/zORuhG_La39-' },
+      pdf: 'pdf/30-pingentes.pdf', checkout: 'https://pay.wiapy.com/SIB1eqJc1Y7n' },
     { slug: 'tiaras', titulo: '16 Tiaras de Miçanga',
       sub: 'Arcos forrados de miçanga, do folclórico ao colorido.',
-      paginas: 17, de: 'R$ 27', por: 'R$ 3,90',
+      paginas: 17, de: 'R$ 27', por: 'R$ 7,80',
       capa: 'assets/capas/tiaras.webp',
-      pdf: 'pdf/16-tiaras.pdf', checkout: 'https://pay.wiapy.com/wCBOlLHfvLlt' },
+      pdf: 'pdf/16-tiaras.pdf', checkout: 'https://pay.wiapy.com/ZEZ3hI1cKH3R' },
   ],
+
+  // ═══ POPUPS DE OFERTA ═══
+  // O que o popup mostra de cada coisa que ela ainda não tem. Os Produtos Extras saem
+  // de `ofertas` acima (capa, preço e checkout já estão lá); aqui fica só a cópia que
+  // o card da oferta não tem — o selo e a frase de venda — mais o bloco dos vídeos,
+  // que não é um Produto Extra e por isso precisa dos dados inteiros.
+  //
+  // A ORDEM da fila é: vídeos primeiro (é o upsell), depois os extras na ordem de
+  // `ofertas`. Quem já comprou sai da fila sozinho.
+  popup: {
+    selo: 'SÓ PARA MEMBROS',
+    // a frase de venda de cada extra, pelo slug
+    frases: {
+      bolsas:    'A mesma trama que você já faz, virando bolsa. 50 projetos com as medidas de cada peça.',
+      pulseiras: 'Padrões étnicos, florais e geométricos no telar — 50 projetos, do simples ao caprichado.',
+      colares:   '50 colares de crochê com miçanga, do clássico ao colorido, com o gráfico de cada um.',
+      pingentes: '30 figuras tecidas para pendurar em corrente ou cordão. Saem rápido e vendem sozinhas.',
+      tiaras:    '16 arcos forrados de miçanga, do folclórico ao colorido. É o que mais chama atenção na feira.',
+    },
+    // o upsell: a aba de vídeos
+    videos: {
+      slug: 'videos',
+      titulo: 'Libere as confecções em vídeo',
+      sub: '45 brincos feitos do início ao fim, na tela, com o gráfico de cada um para baixar. ' +
+           'É ver a mão fazendo em vez de decifrar o gráfico sozinha.',
+      capa: 'assets/videos/pjh6edg1tl.webp',
+    },
+  },
 
   // Onde se compra o que não veio no pedido. `bonus` é o Completo com 30% (R$ 16,90):
   // quem levou o Essencial compra de novo e o webhook libera os bônus. `videos` é o

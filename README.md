@@ -27,6 +27,15 @@ item liberado, o pagamento e o status. O login pergunta à Edge Function
   **Todos os checkouts** (sem isso o order bump comprado avulso não chega), eventos
   aprovado, estornado e chargeback. O token vai no header `Authorization` e fica em
   `membros_config.wiapy_token`. Estorno e chargeback tiram o item.
+- **Preço dos Extras (19/10/2026): o dobro, e por outro checkout.** Cada Extra existe
+  duas vezes na Wiapy: como **order bump** do checkout principal (R$ 7,90 ao lado do
+  produto de R$ 10) e como **checkout próprio** (`CHECKOUTS_EXTRAS` no `mapa.ts`). O
+  app apontava para o link do order bump; agora aponta para o checkout próprio, e foi
+  nele que o preço dobrou — 15,80 / 11,80 / 11,80 / 9,80 / 7,80. **O order bump do
+  checkout principal continua no preço antigo de propósito:** lá ele é um acréscimo de
+  impulso a um produto de R$ 10, e dobrar derruba o anexo. Para mexer num preço:
+  `node scripts/wiapy-checkout-editar.cjs <id> mudancas.json` com `{"amount": <centavos>}`,
+  e depois o `por` do `catalogo.js` — os dois têm que bater.
 - **`membros_eventos`** guarda o corpo cru de toda venda da miçanga, para conferir e
   reprocessar se o formato mudar. Venda de outros produtos entra sem o corpo.
 - **Vendas antigas:** importadas em 19/09 pelo `scripts/membros-importar.cjs`, que
@@ -193,6 +202,62 @@ São 145 páginas e 29 MB no total. **A contagem tem que bater com o campo `pagi
 
 Todo o conteúdo da home e do leitor sai do `catalogo.js`. Nem a home nem o leitor têm
 texto escrito no HTML: para acrescentar um bônus ou trocar uma oferta, mexe-se só ali.
+
+## Popups de oferta
+
+Um popup só, preenchido pelo JS (`#pop-fundo`), que aparece depois de **40 segundos de
+app aberto** e oferece, em rodízio, o que ela ainda não tem.
+
+- **A fila** é montada do ACESSO: os **vídeos** primeiro, que é o upsell, e depois cada
+  Produto Extra que ela não comprou. Quem compra sai da fila sozinho, porque o
+  `conferirAcesso()` atualiza os itens ao voltar do checkout.
+- **O contador só anda com a tela visível.** Sem isso o popup estourava na cara de quem
+  deixou a aba esquecida e voltou horas depois.
+- **Nunca por cima de vídeo tocando.** Em todo o resto, leitor incluído, aparece.
+- **Descanso:** fechar dá 3 horas; tocar no botão verde dá 24, porque ela já foi
+  comprar e insistir ali é o jeito mais rápido de virar desinstalação. Os três números
+  moram no objeto `POP`, no alto do bloco.
+- A cópia de cada oferta (o selo e a frase de venda) está em `catalogo.js`, em `popup`.
+
+**Armadilha já paga:** `display:flex` vence o `display:none` que o atributo `hidden`
+traz de fábrica. Sem a linha `.pop-play[hidden]{display:none}` o selo de play aparecia
+também na capa dos livros.
+
+## Notificações
+
+    node scripts/push-enviar.cjs videos --teste seu@email.com   # confere no celular
+    node scripts/push-enviar.cjs videos                         # solta para a base
+
+O primeiro argumento é o que oferecer **e também o filtro**: só recebe quem ainda NÃO
+tem aquele material. Os textos prontos estão no próprio script.
+
+| peça | onde | o que faz |
+|---|---|---|
+| cartão "Quer ser avisada?" | home do app | pergunta ANTES de chamar o navegador |
+| `sw.js` | raiz | recebe o push e abre o app no lugar certo |
+| `membros-push` | Edge Function | guarda a inscrição do aparelho |
+| `push-enviar` | Edge Function | dispara, filtrando por item |
+| `membros_push` | tabela | uma linha por APARELHO, não por pessoa |
+
+- **A caixa de permissão do navegador aparece uma vez por aparelho.** Recusada, não há
+  como pedir de novo — por isso a pergunta vem num cartão nosso, e o navegador só é
+  chamado depois que ela tocou em "Quero ser avisada" (no iOS isso também é exigência:
+  o pedido precisa sair de um toque).
+- **No iPhone só funciona com o app salvo na tela de início** (iOS 16.4+). Fora disso o
+  cartão nem aparece, para não prometer o que não vai chegar. No Android funciona no
+  navegador normal.
+- **A inscrição guarda o que ela já comprou** (`itens`), atualizado a cada abertura do
+  app. É isso que deixa oferecer por push só o que falta.
+- **`push-enviar` exige a chave de serviço**, não a anônima: a anônima está dentro de
+  toda página nossa, e com ela qualquer um escreveria na bandeja da base inteira. A
+  chave fica em `~/.micanga/push.env`, fora do repositório.
+- **O `sw.js` não faz cache de nada.** Guardar as páginas ali congelaria o app na
+  versão que o aparelho baixou primeiro, e material novo deixaria de aparecer até
+  alguém limpar os dados do site. Por isso também o `vercel.json` manda o `sw.js` sem
+  cache: senão trocar o arquivo deixaria de ter efeito.
+- A chave VAPID pública está no `app.html`; a privada é o segredo `VAPID_JWK` no
+  Supabase. Trocar o par **derruba todas as inscrições** — todo mundo teria de aceitar
+  de novo.
 
 ## O que ainda não está ligado
 

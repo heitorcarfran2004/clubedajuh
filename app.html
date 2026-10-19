@@ -8,6 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="apple-touch-icon" href="assets/logo-180.png">
 <link rel="icon" href="assets/logo-96.webp">
+<link rel="manifest" href="manifest.json">
 <title>Miçangas da Juh</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -850,6 +851,94 @@ a{text-decoration:none; color:inherit}
   .guia, .guia.on{transition:none}
   .guia-corpo, .guia-topo{transition:none}
 }
+
+/* ══════════════════════ POPUP DE OFERTA ══════════════════════
+   Um popup só, preenchido pelo JS. Aparece depois de 40 s de app ABERTO (só conta
+   enquanto a tela está visível) e oferece, em rodízio, o que ela ainda não tem:
+   primeiro os vídeos, que é o upsell, depois cada Produto Extra. Fechar dá algumas
+   horas de descanso; tocar em "quero liberar" dá um dia, porque ela já foi comprar. */
+.pop-fundo{
+  position:fixed; inset:0; z-index:200;
+  background:rgba(20,28,34,.52); -webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px);
+  display:flex; align-items:center; justify-content:center;
+  padding:calc(18px + env(safe-area-inset-top)) 16px calc(18px + env(safe-area-inset-bottom));
+  opacity:0; transition:opacity .22s ease;
+}
+.pop-fundo.on{opacity:1}
+.pop-fundo[hidden]{display:none}
+.pop{
+  position:relative; width:100%; max-width:420px; max-height:100%; overflow-y:auto;
+  background:var(--branco); border-radius:22px; padding:22px 20px 14px;
+  box-shadow:var(--sombra-alta);
+  transform:translateY(16px) scale(.97);
+  transition:transform .26s cubic-bezier(.2,.9,.3,1);
+}
+.pop-fundo.on .pop{transform:none}
+.pop-x{
+  position:absolute; top:11px; right:11px; width:30px; height:30px; border-radius:50%;
+  background:var(--fundo); color:var(--cinza); font-size:19px; line-height:1;
+  display:flex; align-items:center; justify-content:center;
+}
+.pop-topo{display:flex; gap:14px; align-items:flex-start; padding-right:28px}
+/* o livro é retrato; o vídeo é 16:9 e ganha largura em vez de ser cortado em pé */
+.pop-mini{position:relative; flex:0 0 84px; width:84px}
+.pop-mini.filme{flex-basis:112px; width:112px}
+.pop-mini img{width:100%; height:118px; object-fit:cover; border-radius:11px;
+  box-shadow:0 4px 14px rgba(30,42,50,.18)}
+.pop-mini.filme img{height:76px}
+/* o [hidden] precisa estar AQUI: display:flex vence o display:none que o atributo
+   traz de fabrica, e sem esta linha o play aparecia tambem na capa dos livros */
+.pop-play{
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  pointer-events:none;
+}
+.pop-play[hidden]{display:none}
+.pop-play::before{
+  content:"\25B6"; width:34px; height:34px; border-radius:50%;
+  background:rgba(12,18,22,.55); color:#fff; font-size:13px; padding-left:3px;
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 2px 10px rgba(0,0,0,.35);
+}
+.pop-selo{
+  display:inline-block; background:var(--mostarda-nevoa); color:#8A5D00;
+  font-size:10.5px; font-weight:900; letter-spacing:.09em; text-transform:uppercase;
+  padding:5px 10px; border-radius:999px;
+}
+.pop h3{font:800 18px/1.25 var(--sans); letter-spacing:-.015em; margin:9px 0 6px}
+.pop-sub{font-size:13.5px; line-height:1.5; color:var(--cinza)}
+.pop-pe{display:flex; align-items:center; gap:14px; margin-top:18px}
+.pop-preco small{display:block; font-size:11.5px; color:var(--cinza-claro); line-height:1; margin-bottom:3px}
+.pop-preco b{font:900 22px var(--sans); letter-spacing:-.02em; white-space:nowrap}
+.pop-preco s{font-size:12px; color:var(--cinza-claro); font-weight:600; margin-left:5px}
+.pop-cta{
+  flex:1; display:flex; align-items:center; justify-content:center;
+  background:var(--verde); color:#fff; font:800 15.5px var(--sans);
+  padding:16px 12px; border-radius:14px; text-align:center;
+  box-shadow:0 8px 20px rgba(31,164,99,.3);
+}
+.pop-nao{display:block; width:100%; margin-top:8px; padding:11px;
+  font:700 13.5px var(--sans); color:var(--cinza-claro)}
+
+/* ══════════════════════ PEDIDO DE AVISOS ══════════════════════
+   Pergunta ANTES de chamar o navegador: a caixa nativa só aparece uma vez por
+   aparelho e, recusada, não dá para pedir de novo. */
+.cartao-aviso{
+  display:flex; gap:13px; align-items:flex-start;
+  background:var(--branco); border-radius:18px; padding:16px;
+  box-shadow:var(--sombra); margin-bottom:20px;
+}
+.cartao-aviso .sino{
+  flex:0 0 40px; width:40px; height:40px; border-radius:12px;
+  background:var(--rosa-nevoa); color:var(--rosa);
+  display:flex; align-items:center; justify-content:center;
+}
+.cartao-aviso .sino svg{width:20px; height:20px}
+.cartao-aviso h4{font:800 14.5px var(--sans); margin-bottom:3px}
+.cartao-aviso p{font-size:13px; line-height:1.45; color:var(--cinza)}
+.cartao-aviso .acoes{display:flex; gap:6px; margin-top:12px}
+.cartao-aviso .sim{background:var(--rosa); color:#fff; font:800 13px var(--sans);
+  padding:10px 16px; border-radius:11px}
+.cartao-aviso .nao{color:var(--cinza-claro); font:700 13px var(--sans); padding:10px 12px}
 </style>
 </head>
 <body>
@@ -874,6 +963,8 @@ a{text-decoration:none; color:inherit}
       <h1 id="ola-nome">Que bom te ver por aqui!</h1>
       <p>Tudo o que você comprou está liberado, para sempre.</p>
     </div>
+
+    <div id="aviso-avisos"></div>
 
     <div class="cabeca-secao"><h2>Continue de onde parou</h2></div>
     <div id="bloco-principal"></div>
@@ -1078,6 +1169,29 @@ a{text-decoration:none; color:inherit}
   </div>
 </nav>
 
+<!-- ═════════════════ POPUP DE OFERTA ═════════════════ -->
+<div class="pop-fundo" id="pop-fundo" hidden onclick="if(event.target===this)fecharPopup()">
+  <div class="pop" role="dialog" aria-modal="true" aria-labelledby="pop-titulo">
+    <button class="pop-x" type="button" onclick="fecharPopup()" aria-label="Fechar">&times;</button>
+    <div class="pop-topo">
+      <span class="pop-mini" id="pop-mini">
+        <img id="pop-capa" alt="" width="84" height="118">
+        <span class="pop-play" id="pop-play" hidden aria-hidden="true"></span>
+      </span>
+      <div>
+        <span class="pop-selo" id="pop-selo"></span>
+        <h3 id="pop-titulo"></h3>
+        <p class="pop-sub" id="pop-sub"></p>
+      </div>
+    </div>
+    <div class="pop-pe">
+      <div class="pop-preco"><small>pagamento único</small><b id="pop-valor"></b></div>
+      <a class="pop-cta toque" id="pop-cta" href="#">Quero liberar</a>
+    </div>
+    <button class="pop-nao" type="button" onclick="fecharPopup()">Agora não</button>
+  </div>
+</div>
+
 <script src="acesso.js"></script>
 <script>
 // sem login, volta para a tela de entrada: o app não abre pela URL direta
@@ -1199,6 +1313,7 @@ var FILME = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-w
 var RELOGIO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5.2l3.4 2"/></svg>';
 var PLAY_CHEIO = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.6v12.8l10.5-6.4z"/></svg>';
 var CADEADO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>';
+var SINO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 9a6 6 0 10-12 0c0 6-2 7-2 7h16s-2-1-2-7z"/><path d="M13.7 20a2 2 0 01-3.4 0"/></svg>';
 var PLAY = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10 8.5l6 3.5-6 3.5v-7z"/></svg>';
 // nove contas em grade: o desenho do próprio gráfico de miçanga
 var CONTAS = '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5.5" cy="5.5" r="2.4"/><circle cx="12" cy="5.5" r="2.4"/><circle cx="18.5" cy="5.5" r="2.4"/><circle cx="5.5" cy="12" r="2.4"/><circle cx="12" cy="12" r="2.4"/><circle cx="18.5" cy="12" r="2.4"/><circle cx="5.5" cy="18.5" r="2.4"/><circle cx="12" cy="18.5" r="2.4"/><circle cx="18.5" cy="18.5" r="2.4"/></svg>';
@@ -1282,6 +1397,8 @@ function montarTudo() {
     '</a>';
   }).join('');
   document.getElementById('lista-ofertas').innerHTML = ofertas;
+
+  montarAvisos();
 
   // ── vídeos: grade de miniaturas, sem título e sem número ──
   var vs = CATALOGO.videos || [];
@@ -1800,6 +1917,187 @@ window.addEventListener('resize', function () {
 // no DOM de quem nunca abriu
 var guiaMontado = false;
 try { if (localStorage.getItem('guia-visto')) document.getElementById('fab-pisca').style.display = 'none'; } catch (e) {}
+
+/* ══════════════════════════════════════════════════════════════════════
+   POPUPS DE OFERTA — o que ela ainda não tem, em rodízio
+
+   Quando: depois de ESPERA segundos de app ABERTO (o contador só anda com a tela
+   visível, senão o popup estoura na cara de quem deixou a aba esquecida). Nunca por
+   cima de um vídeo tocando.
+
+   O que: a fila é os vídeos primeiro, que é o upsell, e depois cada Produto Extra que
+   ela não comprou. Quem compra sai da fila sozinho — a fila é montada do ACESSO, que
+   o conferirAcesso() atualiza ao voltar do checkout.
+
+   Quanto: fechar dá DESCANSO de algumas horas; tocar em "quero liberar" dá um dia,
+   porque ela já foi comprar e insistir ali é o jeito mais rápido de virar desinstalação.
+   ══════════════════════════════════════════════════════════════════════ */
+var POP = {
+  ESPERA: 40,                     // segundos de app aberto antes do popup
+  DESCANSO: 3 * 3600 * 1000,      // depois de "agora não" / fechar
+  DESCANSO_IDA: 24 * 3600 * 1000, // depois de tocar no botão verde
+};
+var popAberto = false, segNoApp = 0;
+
+function popLer(k, padrao) { try { return localStorage.getItem(k) || padrao; } catch (e) { return padrao; } }
+function popGravar(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+function popDescansando() { return Date.now() < (parseInt(popLer('pop-ate', '0'), 10) || 0); }
+
+function filaDeOfertas() {
+  var P = CATALOGO.popup, f = [];
+  if (!ACESSO.tem('videos')) {
+    f.push({ slug: 'videos', titulo: P.videos.titulo, sub: P.videos.sub, capa: P.videos.capa,
+             filme: true, por: CATALOGO.compra.videos.preco, de: '', link: CATALOGO.compra.videos.link });
+  }
+  CATALOGO.ofertas.forEach(function (o) {
+    if (ACESSO.tem(o.slug)) return;
+    f.push({ slug: o.slug, titulo: 'Libere as ' + o.titulo, sub: P.frases[o.slug] || o.sub,
+             capa: o.capa, filme: false, por: o.por, de: o.de, link: o.checkout });
+  });
+  return f;
+}
+
+// rodízio: guarda em que ponto da fila parou. A fila encolhe conforme ela compra,
+// então o índice é corrigido para caber sempre.
+function proximaOferta() {
+  var fila = filaDeOfertas();
+  if (!fila.length) return null;
+  var i = (parseInt(popLer('pop-i', '0'), 10) || 0) % fila.length;
+  popGravar('pop-i', String((i + 1) % fila.length));
+  return fila[i];
+}
+
+function abrirPopup(of) {
+  popAberto = true;
+  document.getElementById('pop-mini').classList.toggle('filme', !!of.filme);
+  document.getElementById('pop-play').hidden = !of.filme;
+  var img = document.getElementById('pop-capa');
+  img.width = of.filme ? 112 : 84; img.height = of.filme ? 76 : 118;
+  img.src = of.capa; img.alt = '';
+  document.getElementById('pop-selo').textContent = CATALOGO.popup.selo;
+  document.getElementById('pop-titulo').textContent = of.titulo;
+  document.getElementById('pop-sub').textContent = of.sub;
+  document.getElementById('pop-valor').innerHTML =
+    of.por + (of.de ? ' <s>' + of.de + '</s>' : '');
+  var cta = document.getElementById('pop-cta');
+  cta.href = of.link;
+  cta.onclick = function () { popGravar('pop-ate', String(Date.now() + POP.DESCANSO_IDA)); };
+  var f = document.getElementById('pop-fundo');
+  f.hidden = false;
+  requestAnimationFrame(function () { f.classList.add('on'); });
+}
+
+function fecharPopup() {
+  if (!popAberto) return;
+  popAberto = false; segNoApp = 0;
+  popGravar('pop-ate', String(Date.now() + POP.DESCANSO));
+  var f = document.getElementById('pop-fundo');
+  f.classList.remove('on');
+  setTimeout(function () { f.hidden = true; }, 260);
+}
+document.addEventListener('keydown', function (e) { if (e.key === 'Escape') fecharPopup(); });
+
+setInterval(function () {
+  if (document.visibilityState !== 'visible' || popAberto) return;
+  segNoApp++;
+  if (segNoApp < POP.ESPERA || popDescansando()) return;
+  // não interrompe vídeo tocando
+  if (document.getElementById('tela-video').classList.contains('on')) return;
+  var of = proximaOferta();
+  if (of) abrirPopup(of);
+  else { segNoApp = 0; popGravar('pop-ate', String(Date.now() + POP.DESCANSO)); } // já tem tudo
+}, 1000);
+
+/* ══════════════════════════════════════════════════════════════════════
+   AVISOS (notificações)
+
+   A caixa de permissão do navegador aparece UMA vez por aparelho: recusada, não há
+   como pedir de novo. Por isso a pergunta vem antes, num cartão nosso, e o navegador
+   só é chamado depois que ela tocou em "Quero ser avisada" — que também é exigência
+   do iOS, onde o pedido precisa sair de um toque.
+
+   No iPhone a notificação só funciona com o app SALVO NA TELA DE INÍCIO (iOS 16.4+).
+   Fora disso o cartão nem aparece, para não prometer o que não vai chegar.
+   ══════════════════════════════════════════════════════════════════════ */
+var CHAVE_VAPID = 'BL3VPB_YP8gLJ-W95Q-EtBt_OzhCRBJjqQbyJ4mOJlkj1P_XXyspKsPYMsOnJegixdzDKlggt_O6MVN_USlBC9c';
+var URL_PUSH = 'https://dxybmayffxvepmwbyezc.supabase.co/functions/v1/membros-push';
+
+function daParaAvisar() {
+  if (!('Notification' in window) || !('serviceWorker' in navigator) || !('PushManager' in window)) return false;
+  // iPhone fora da tela de início não entrega push nenhum
+  var iOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  var instalado = window.navigator.standalone === true ||
+    (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
+  return !iOS || instalado;
+}
+
+function montarAvisos() {
+  var alvo = document.getElementById('aviso-avisos');
+  if (!alvo) return;
+  if (!daParaAvisar() || Notification.permission !== 'default' || popLer('avisos-nao', '') === '1') {
+    alvo.innerHTML = ''; return;
+  }
+  alvo.innerHTML =
+    '<div class="cartao-aviso">' +
+      '<span class="sino">' + SINO + '</span>' +
+      '<div style="flex:1">' +
+        '<h4>Quer ser avisada?</h4>' +
+        '<p>Mando um aviso quando entrar material novo e quando sair oferta de membro ' +
+          'nos Produtos Extras. Nada além disso.</p>' +
+        '<div class="acoes">' +
+          '<button class="sim toque" type="button" onclick="pedirAvisos()">Quero ser avisada</button>' +
+          '<button class="nao" type="button" onclick="recusarAvisos()">Agora não</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+}
+
+function recusarAvisos() { popGravar('avisos-nao', '1'); montarAvisos(); }
+
+function pedirAvisos() {
+  Notification.requestPermission().then(function (perm) {
+    montarAvisos();
+    if (perm !== 'granted') return;
+    assinarPush();
+    navigator.serviceWorker.ready.then(function (reg) {
+      reg.showNotification('Pronto, avisos ligados!', {
+        body: 'Vou te avisar quando entrar material novo e quando sair oferta de membro.',
+        icon: 'assets/logo-192.webp', badge: 'assets/logo-96.webp', tag: 'boas-vindas',
+      });
+    });
+  });
+}
+
+function bytesDaChave(b64) {
+  var pad = '='.repeat((4 - b64.length % 4) % 4);
+  var cru = atob((b64 + pad).replace(/-/g, '+').replace(/_/g, '/'));
+  var saida = new Uint8Array(cru.length);
+  for (var i = 0; i < cru.length; i++) saida[i] = cru.charCodeAt(i);
+  return saida;
+}
+
+// guarda a inscrição no Supabase junto do e-mail e do que ela já comprou — é o que
+// deixa mandar aviso só para quem ainda NÃO tem aquele material.
+function assinarPush() {
+  if (!daParaAvisar() || Notification.permission !== 'granted') return;
+  navigator.serviceWorker.ready.then(function (reg) {
+    return reg.pushManager.getSubscription().then(function (s) {
+      return s || reg.pushManager.subscribe({
+        userVisibleOnly: true, applicationServerKey: bytesDaChave(CHAVE_VAPID),
+      });
+    });
+  }).then(function (sub) {
+    return fetch(URL_PUSH, {
+      method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ email: ACESSO.email(), itens: ACESSO.itens(), inscricao: sub }),
+    });
+  }).catch(function () { /* sem push hoje; o app continua igual */ });
+}
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').then(function () { assinarPush(); })
+    .catch(function () {});
+}
 
 rota();
 conferirAcesso();
